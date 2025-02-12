@@ -1,0 +1,17 @@
+{
+  "name": "pdf-project",
+  "version": "1.0.0",
+  "description": "PDF Creation ",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Rishabh Srivastava",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "express": "^4.21.2",
+    "pdfkit": "^0.16.0"
+  }
+}
