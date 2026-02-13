@@ -23,8 +23,6 @@ const valueText = (doc, text, x, y) => {
   doc.font(FONT_REGULAR).fillColor("#333333").fontSize(7).text(text, x, y);
 };
 
-/* --
-
 /* ---------- COLUMN DATA ---------- */
 
 const fromData = [
@@ -291,130 +289,134 @@ const sparePartsHeaders = [
   "Name",
   "Code",
   "HSN",
-  "MRP/Unit Price",
+  "MRP",
   "GST%",
   "Unit Price\n(Before Disc.)",
-  "Discount",
+  "Discount %",
   "Unit Price\n(After Disc.)",
   "Qty.",
+  "Approved %",
   "Taxable\nValue",
   "Net Total",
 ];
 
 const sparePartsColumnWidths = [
   20, // SN
-  85, // Spare Parts
+  70, // Name (reduced from 85)
   40, // Code
-  45, // HSN
-  38, // MRP
+  40, // HSN
+  30, // MRP
   30, // GST
   60, // Unit Price Before
   42, // Discount
-  65, // Unit Price After
-  22, // Qty
-  52, // Taxable Value
-  52, // Net Total
+  60, // Unit Price After
+  26, // Qty
+  42, // Approved %
+  40, // Taxable Value
+  50, // Net Total
 ];
 
 const sparePartsRows = [
-  {
-    sn: 1,
-    part: "Air Filter",
-    code: "34802353480235",
-    hsn: "3480235",
-    mrp: "5678",
-    gst: "18",
-    before: "230.00",
-    disc: "0",
-    after: "210.00",
-    qty: "2",
-    taxable: "360.00",
-    total: "330.00",
-  },
-  {
-    sn: 2,
-    part: "Front Bumper",
-    code: "5434543543543",
-    hsn: "3488935",
-    mrp: "4823",
-    gst: "18",
-    before: "125.00",
-    disc: "0",
-    after: "160.00",
-    qty: "2",
-    taxable: "250.00",
-    total: "210.00",
-  },
-  // {
-  //   sn: 3,
-  //   part: "Engine Oil",
-  //   code: "54543543643643",
-  //   hsn: "3484567",
-  //   mrp: "3784",
-  //   gst: "20",
-  //   before: "150.00",
-  //   disc: "0",
-  //   after: "180.00",
-  //   qty: "2",
-  //   taxable: "300.00",
-  //   total: "280.00",
-  // },
-  // {
-  //   sn: 4,
-  //   part: "Brake Pad",
-  //   code: "5656456454453",
-  //   hsn: "3481111",
-  //   mrp: "2890",
-  //   gst: "18",
-  //   before: "320.00",
-  //   disc: "10",
-  //   after: "288.00",
-  //   qty: "1",
-  //   taxable: "288.00",
-  //   total: "340.00",
-  // },
-  // {
-  //   sn: 5,
-  //   part: "Clutch Plate",
-  //   code: "456456456456",
-  //   hsn: "3482222",
-  //   mrp: "6500",
-  //   gst: "18",
-  //   before: "950.00",
-  //   disc: "5",
-  //   after: "902.50",
-  //   qty: "1",
-  //   taxable: "902.50",
-  //   total: "1065.00",
-  // },
-  // {
-  //   sn: 6,
-  //   part: "Spark Plug",
-  //   code: "45645654654654",
-  //   hsn: "3483333",
-  //   mrp: "890",
-  //   gst: "18",
-  //   before: "120.00",
-  //   disc: "0",
-  //   after: "120.00",
-  //   qty: "3",
-  //   taxable: "360.00",
-  //   total: "425.00",
-  // },
-  // {
-  //   sn: 7,
-  //   part: "Chain Sprocket",
-  //   code: "456456456546",
-  //   hsn: "3484444",
-  //   mrp: "7200",
-  //   gst: "18",
-  //   before: "1150.00",
-  //   disc: "5",
-  //   after: "1092.50",
-  //   qty: "1",
-  //   taxable: "1092.50",
-  //   total: "1288.00",
-  // },
+    {
+      sn: 1,
+      part: "Air Filter",
+      code: "34802353480235",
+      hsn: "3480235",
+      mrp: "5678",
+      gst: "18",
+      before: "230.00",
+      disc: "0",
+      after: "210.00",
+      qty: "2",
+      approved: "55",
+      taxable: "360.00",
+      total: "330.00",
+    },
+    {
+      sn: 2,
+      part: "Front Bumper",
+      code: "5434543543543",
+      hsn: "3488935",
+      mrp: "4823",
+      gst: "18",
+      before: "125.00",
+      disc: "0",
+      after: "160.00",
+      qty: "2",
+      approved: "70",
+      taxable: "250.00",
+      total: "210.00",
+    },
+//   {
+//     sn: 3,
+//     part: "Engine Oil",
+//     code: "54543543643643",
+//     hsn: "3484567",
+//     mrp: "3784",
+//     gst: "20",
+//     before: "150.00",
+//     disc: "0",
+//     after: "180.00",
+//     qty: "2",
+//     taxable: "300.00",
+//     total: "280.00",
+//   },
+//   {
+//     sn: 4,
+//     part: "Brake Pad",
+//     code: "5656456454453",
+//     hsn: "3481111",
+//     mrp: "2890",
+//     gst: "18",
+//     before: "320.00",
+//     disc: "10",
+//     after: "288.00",
+//     qty: "1",
+//     taxable: "288.00",
+//     total: "340.00",
+//   },
+//   {
+//     sn: 5,
+//     part: "Clutch Plate",
+//     code: "456456456456",
+//     hsn: "3482222",
+//     mrp: "6500",
+//     gst: "18",
+//     before: "950.00",
+//     disc: "5",
+//     after: "902.50",
+//     qty: "1",
+//     taxable: "902.50",
+//     total: "1065.00",
+//   },
+//   {
+//     sn: 6,
+//     part: "Spark Plug",
+//     code: "45645654654654",
+//     hsn: "3483333",
+//     mrp: "890",
+//     gst: "18",
+//     before: "120.00",
+//     disc: "0",
+//     after: "120.00",
+//     qty: "3",
+//     taxable: "360.00",
+//     total: "425.00",
+//   },
+//   {
+//     sn: 7,
+//     part: "Chain Sprocket",
+//     code: "456456456546",
+//     hsn: "3484444",
+//     mrp: "7200",
+//     gst: "18",
+//     before: "1150.00",
+//     disc: "5",
+//     after: "1092.50",
+//     qty: "1",
+//     taxable: "1092.50",
+//     total: "1288.00",
+//   },
   // {
   //   sn: 8,
   //   part: "Side Mirror",
@@ -484,6 +486,7 @@ const sparePartsRows = [
     disc: "0",
     after: "400.00",
     qty: "2",
+    approved: "67",
     taxable: "800.00",
     total: "944.00",
   })),
@@ -493,108 +496,108 @@ const sparePartsRows = [
 const servicesHeaders = [
   "SN.",
   "Service Description",
-  "HSN",
-  "MRP/\nUnit Price",
+  "MRP",
   "GST%",
   "Unit Price\n(Before Disc.)",
-  "Discount",
+  "Discount %",
   "Unit Price\n(After Disc.)",
   "Qty.",
+  "Approved %",
   "Taxable\nValue",
   "Net Total",
 ];
 
 const servicesColumnWidths = [
   20, // SN
-  95, // Spare Parts (+25)
-  45, // Model (+10)
-  45, // MRP (+10)
-  35, // GST (+5)
-  75, // Unit Price Before (+20)
-  37, // Discount
-  80, // Unit Price After (+20)
-  22, // Qty
-  55, // Taxable Value (+10)
-  41, // Net Total (-16 to balance)
+  150, // Spare Parts (85 → 95)       +10
+  30, // MRP
+  30, // GST
+  60, // Unit Price Before
+  42, // Discount
+  60, // Unit Price After
+  26, // Qty
+  42, // Approved %
+  40, // Taxable Value
+  50, // Net Total
 ];
 
 const servicesPartsRows = [
-  {
-    sn: 1,
-    part: "Air Filter",
-    hsn: "Splendor",
-    mrp: "5678",
-    gst: "18",
-    before: "230.00",
-    disc: "0",
-    after: "210.00",
-    qty: "2",
-    taxable: "360.00",
-    total: "330.00",
-  },
-  {
-    sn: 2,
-    part: "Front Bumper",
-    hsn: "Apache",
-    mrp: "4823",
-    gst: "18",
-    before: "125.00",
-    disc: "0",
-    after: "160.00",
-    qty: "2",
-    taxable: "250.00",
-    total: "210.00",
-  },
-  {
-    sn: 3,
-    part: "Engine Oil",
-    hsn: "Splendor",
-    mrp: "3784",
-    gst: "20",
-    before: "150.00",
-    disc: "0",
-    after: "180.00",
-    qty: "2",
-    taxable: "300.00",
-    total: "280.00",
-  },
-  {
-    sn: 4,
-    part: "Brake Pad",
-    hsn: "Pulsar",
-    mrp: "2890",
-    gst: "18",
-    before: "320.00",
-    disc: "10",
-    after: "288.00",
-    qty: "1",
-    taxable: "288.00",
-    total: "340.00",
-  },
-  {
-    sn: 5,
-    part: "Clutch Plate",
-    hsn: "Apache",
-    mrp: "6500",
-    gst: "18",
-    before: "950.00",
-    disc: "5",
-    after: "902.50",
-    qty: "1",
-    taxable: "902.50",
-    total: "1065.00",
-  },
+  //   {
+  //     sn: 1,
+  //     part: "Air Filter",
+  //     mrp: "5678",
+  //     gst: "18",
+  //     before: "230.00",
+  //     disc: "0",
+  //     after: "210.00",
+  //     qty: "2",
+  //     approved: "67",
+  //     taxable: "360.00",
+  //     total: "330.00",
+  //   },
+  //   {
+  //     sn: 2,
+  //     part: "Front Bumper",
+  //     mrp: "4823",
+  //     gst: "18",
+  //     before: "125.00",
+  //     disc: "0",
+  //     after: "160.00",
+  //     qty: "2",
+  //     approved: "67",
+  //     taxable: "250.00",
+  //     total: "210.00",
+  //   },
+  //   {
+  //     sn: 3,
+  //     part: "Engine Oil",
+  //     mrp: "3784",
+  //     gst: "20",
+  //     before: "150.00",
+  //     disc: "0",
+  //     after: "180.00",
+  //     qty: "2",
+  //     approved: "67",
+  //     taxable: "300.00",
+  //     total: "280.00",
+  //   },
+  //   {
+  //     sn: 4,
+  //     part: "Brake Pad",
+  //     mrp: "2890",
+  //     gst: "18",
+  //     before: "320.00",
+  //     disc: "10",
+  //     after: "288.00",
+  //     qty: "1",
+  //     approved: "67",
+  //     taxable: "288.00",
+  //     total: "340.00",
+  //   },
+  //   {
+  //     sn: 5,
+  //     part: "Clutch Plate",
+  //     mrp: "6500",
+  //     gst: "18",
+  //     before: "950.00",
+  //     disc: "5",
+  //     after: "902.50",
+  //     qty: "1",
+  //     approved: "67",
+  //     taxable: "902.50",
+  //     total: "1065.00",
+  //   },
   // ---- Repeating pattern for pagination testing ----
   ...Array.from({ length: 1 }, (_, i) => ({
     sn: i + 11,
     part: "General Spare Part",
-    hsn: `34900${i + 11}`,
     mrp: "3000",
     gst: "18",
     before: "400.00",
     disc: "0",
     after: "400.00",
     qty: "2",
+    approved: "67",
     taxable: "800.00",
     total: "944.00",
   })),
@@ -727,6 +730,7 @@ const drawSparePartsTable = ({
       item.disc,
       item.after,
       item.qty,
+      item.approved,
       item.taxable,
       item.total,
     ];
@@ -792,13 +796,13 @@ const drawServiceTable = ({
     const rowData = [
       String(item.sn),
       item.part,
-      item.hsn,
       item.mrp,
       item.gst,
       item.before,
       item.disc,
       item.after,
       item.qty,
+      item.approved,
       item.taxable,
       item.total,
     ];
@@ -837,7 +841,7 @@ const drawServiceTable = ({
 
 /* ---------- MAIN PDF FUNCTION ---------- */
 
-const newPdf = (res) => {
+const claimInvoice = (res) => {
   const doc = new PDFDocument({ size: "A4", margin: 10, bufferPages: true });
 
   const invoiceType = "Tax Invoice";
@@ -1094,9 +1098,8 @@ const newPdf = (res) => {
       width: totalPriceBoxWidth - 5,
       align: "right",
     });
-  // GST Table
 
-  // header height
+  // GST Table
   let gstHeaderHeight = 0;
   let gstTableY = totalPriceBoxY + 33;
 
@@ -1153,10 +1156,10 @@ const newPdf = (res) => {
 
   gstTableHeaders.forEach((cell, i) => {
     doc
-      .font(FONT_SEMIBOLD)
+      .font(FONT_BOLD)
       .fillColor("#333333")
       .fontSize(7)
-      .text(cell, tableCellX + 3, gstTableY + 4, {
+      .text(cell, tableCellX + 5, gstTableY + 4, {
         width: gstTableColumnWidths[i] - 6,
       });
 
@@ -1192,7 +1195,7 @@ const newPdf = (res) => {
         .font(i === 0 ? FONT_SEMIBOLD : FONT_REGULAR)
         .fillColor("#333333")
         .fontSize(7)
-        .text(String(cell ?? ""), rowX + 3, tableRowY + 4, {
+        .text(String(cell ?? ""), rowX + 5, tableRowY + 4, {
           width: gstTableColumnWidths[i] - 6,
         });
 
@@ -1218,8 +1221,10 @@ const newPdf = (res) => {
     { label: "IGST 9%", value: "377.83" },
     { label: "Tax Total", value: "754.17" },
     { label: "Net Total", value: "4944.83" },
-    { label: "Paid Total", value: "4944.83" },
-    { label: "Balance Total", value: "4944.83" },
+    { label: "File Charge", value: "00.0" },
+    { label: "Pending Do", value: "00.0" },
+    { label: "Paid Total", value: "5000.44" },
+    { label: "Balance Total", value: "00.0" },
   ];
 
   const boxX = pageWidth - 140;
@@ -1241,7 +1246,12 @@ const newPdf = (res) => {
       summaryEndedOnNewPage = true;
       summaryEndPage = currentPage;
     }
-    if (Number(item?.value) > 0) {
+    if (
+      Number(item?.value) > 0 ||
+      item?.label === "Balance Total" ||
+      item?.label === "Pending Do" ||
+      item?.label === "File Charge"
+    ) {
       // Label
       doc
         .font(FONT_SEMIBOLD)
@@ -1252,7 +1262,7 @@ const newPdf = (res) => {
       // Value (right aligned)
       doc
         .font(index === summaryData.length - 1 ? FONT_SEMIBOLD : FONT_REGULAR)
-        .text(`₹${item.value}`, boxX + labelWidth, totalPriceY, {
+        .text(`₹ ${item.value}`, boxX + labelWidth, totalPriceY, {
           width: valueWidth - 8,
           align: "right",
         });
@@ -1277,15 +1287,49 @@ const newPdf = (res) => {
 
   doc.fontSize(7);
 
-  // terms and conditon data
-
-  let termsStartY;
+  let bankStartX;
+  let bankStartY;
 
   if (summaryEndedOnNewPage) {
-    termsStartY = headerHeight + 25;
+    bankStartY = headerHeight + 10;
+    bankStartX = 20;
   } else {
-    termsStartY = tableRowY + 30;
+    bankStartY = tableRowY + 15;
+    bankStartX = 25;
   }
+
+  let bankY = bankStartY;
+
+  const bankDetails = [
+    { label: "A/c Holder Name", value: "Ratnashil Online Services Pvt Ltd" },
+    { label: "A/c No.", value: "661351200021" },
+    { label: "Bank Name", value: "ICICI Bank" },
+    { label: "Branch Name", value: "-" },
+    { label: "IFSC Code", value: "ICIC0006613" },
+  ];
+
+  doc.font(FONT_BOLD).text("BANK DETAILS", bankStartX, bankY);
+
+  bankDetails.forEach((item, idx) => {
+    const text = `${item.label} ${item.value}`;
+    const labelWidth = 62;
+
+    const lineHeight = doc.heightOfString(text, {
+      width: boxWidth - 130,
+    });
+
+    doc
+      .font(FONT_SEMIBOLD)
+      .fillColor("#333333")
+      .text(item.label, bankStartX, bankY + 15);
+
+    doc
+      .font(FONT_REGULAR)
+      .fillColor("#333333")
+      .text(item.value, labelWidth + bankStartX, bankY + 15);
+
+    bankY += lineHeight + 4;
+  });
 
   const termsAndConditions = [
     "Subject to Faridabad Jurisdiction.",
@@ -1311,40 +1355,48 @@ const newPdf = (res) => {
 
   const totalTermsHeight = getTermsHeight();
 
-  if (termsStartY + totalTermsHeight > doc.page.height - 40) {
+  let termsY = bankY + 50;
+  let termsStartX = 20;
+
+  if (termsY + totalTermsHeight > doc.page.height - 40) {
     doc.addPage();
-    termsStartY = headerHeight + 10;
+    termsY = headerHeight + 23;
   }
 
-  let termsY = termsStartY;
-
-  doc.font(FONT_BOLD).text("TERMS & CONDITIONS", 20, termsY - 15);
+  doc
+    .font(FONT_BOLD)
+    .fillColor("#333333")
+    .text("TERMS & CONDITIONS", termsStartX, termsY - 15);
 
   termsAndConditions.forEach((text, index) => {
     const numberedText = `${index + 1}. ${text}`;
 
     const textHeight = doc.heightOfString(numberedText, {
-      width: boxWidth - 130,
+      width: boxWidth - 20,
     });
 
     doc
       .font(FONT_REGULAR)
       .fillColor("#333333")
-      .text(numberedText, 20, termsY, { width: boxWidth - 130 });
+      .text(numberedText, termsStartX, termsY, { width: boxWidth });
 
     termsY += textHeight + 3;
   });
 
-  doc.font(FONT_SEMIBOLD).text("Declaration : ", 20, termsY + 10);
+  const widthOfDec = doc.font(FONT_SEMIBOLD).widthOfString("Declaration : ");
+
+  doc.font(FONT_SEMIBOLD).text("Declaration : ", termsStartX, termsY + 10);
 
   doc
     .font(FONT_REGULAR)
     .text(
       "We Declare that this invoice shows the actual price of the goods described and that all particulars are true and correct.",
-      63,
+      widthOfDec + termsStartX,
       termsY + 10,
-      { width: boxWidth - 130 },
+      { width: boxWidth },
     );
+
+  doc.font(FONT_BOLD).text("CUSTOMER SIGNATURE", termsStartX, termsY + 30);
 
   const range = doc.bufferedPageRange();
 
@@ -1366,4 +1418,4 @@ const newPdf = (res) => {
   doc.end();
 };
 
-export default newPdf;
+export default claimInvoice;

@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 
 /* ---------- CONSTANTS ---------- */
 const LABEL_COLOR = "#333333";
-const VALUE_COLOR = "#888888";
+const VALUE_COLOR = "#666666";
 const BORDER_COLOR = "#C7CED5";
 
 const FONT_REGULAR = "Inter_24pt-Regular";
@@ -16,6 +16,15 @@ const FONT_SEMIBOLD = "Inter_24pt-SemiBold";
 const FONT_BOLD = "Inter_28pt-Bold";
 
 /* ---------- COLUMN DATA ---------- */
+
+const repeatFromData = [
+  { label: "From : ", value: "RATNASHIL ONLINE SERVICES PRIVATE LIMITED" },
+  {
+    label: "Address : ",
+    value: "Plot no.967 Bypass Road, Sector-9, Faridabad Haryana - 121006",
+  },
+  { label: "Contact : ", value: "9027914004" },
+];
 
 const fromData = [
   { label: "From : ", value: "RATNASHIL ONLINE SERVICES PRIVATE LIMITED" },
@@ -29,6 +38,15 @@ const fromData = [
   { label: "GSTIN : ", value: "06AAICR7704D1ZI" },
   { label: "PAN No : ", value: "AAICR7704D" },
   { label: "Email ID : ", value: "account@pikpart.com" },
+];
+
+const repeatBuyerData = [
+  { label: "Buyer : ", value: "9027914004" },
+  {
+    label: "Address : ",
+    value: "Raghunathganj-II, Murshidabad, West Bengal - 742213",
+  },
+  { label: "Contact : ", value: "8250794411" },
 ];
 
 const buyerData = [
@@ -47,6 +65,15 @@ const buyerData = [
   },
   { label: "GSTIN/ARN : ", value: "NA" },
   { label: "PAN No : ", value: "AAICR7704D" },
+];
+
+const repeatConsigneeData = [
+  { label: "Consignee : ", value: "Chainstart Autopart" },
+  {
+    label: "Address : ",
+    value: "Raghunathganj-II, Murshidabad, West Bengal - 742213",
+  },
+  { label: "Contact : ", value: "8250794411" },
 ];
 
 const consigneeData = [
@@ -164,8 +191,7 @@ const drawHeaderColumns = (doc, fromData, buyerData, consigneeData) => {
 
 const sparePartsHeaders = [
   "SN.",
-  "Name",
-  "Code",
+  "Name/Code",
   "Model",
   "HSN",
   "MRP",
@@ -180,18 +206,17 @@ const sparePartsHeaders = [
 
 const sparePartsColumnWidths = [
   20, // SN
-  70, // Spare Parts
-  40, // Code
-  45, // Model
-  45, // HSN
-  35, // MRP
-  30, // GST
-  55, // Unit Price Before
-  37, // Discount
-  60, // Unit Price After
-  22, // Qty
-  45, // Taxable Value
-  47, // Net Total
+  120, // Spare Parts  // Code
+  44, // Model
+  44, // HSN
+  34, // MRP
+  29, // GST
+  54, // Unit Price Before
+  36, // Discount
+  59, // Unit Price After
+  21, // Qty
+  44, // Taxable Value
+  46, // Net Total
 ];
 
 const sparePartsRows = [
@@ -212,7 +237,7 @@ const sparePartsRows = [
   },
   {
     sn: 2,
-    part: "Front Bumper",
+    part: "Front Bumper WAGONR 5DR 1.0L LXI 2ND GEN F/L",
     code: "3488935",
     model: "Apache",
     hsn: "3488935",
@@ -270,84 +295,84 @@ const sparePartsRows = [
     taxable: "902.50",
     total: "1065.00",
   },
-  {
-    sn: 6,
-    part: "Spark Plug",
-    code: "3483333",
-    model: "Splendor",
-    hsn: "3483333",
-    mrp: "890",
-    gst: "18",
-    before: "120.00",
-    disc: "0",
-    after: "120.00",
-    qty: "3",
-    taxable: "360.00",
-    total: "425.00",
-  },
-  {
-    sn: 7,
-    part: "Chain Sprocket",
-    code: "3484444",
-    model: "Pulsar",
-    hsn: "3484444",
-    mrp: "7200",
-    gst: "18",
-    before: "1150.00",
-    disc: "5",
-    after: "1092.50",
-    qty: "1",
-    taxable: "1092.50",
-    total: "1288.00",
-  },
-  {
-    sn: 8,
-    part: "Side Mirror",
-    code: "3485555",
-    model: "Apache",
-    hsn: "3485555",
-    mrp: "1500",
-    gst: "18",
-    before: "280.00",
-    disc: "0",
-    after: "280.00",
-    qty: "2",
-    taxable: "560.00",
-    total: "660.00",
-  },
-  {
-    sn: 9,
-    part: "Indicator Set",
-    code: "3486666",
-    model: "Splendor",
-    hsn: "3486666",
-    mrp: "2200",
-    gst: "18",
-    before: "350.00",
-    disc: "0",
-    after: "350.00",
-    qty: "1",
-    taxable: "350.00",
-    total: "413.00",
-  },
-  {
-    sn: 10,
-    part: "Battery",
-    code: "3487777",
-    model: "Pulsar",
-    hsn: "3487777",
-    mrp: "9500",
-    gst: "18",
-    before: "2200.00",
-    disc: "5",
-    after: "2090.00",
-    qty: "1",
-    taxable: "2090.00",
-    total: "2466.00",
-  },
+  // {
+  //   sn: 6,
+  //   part: "Spark Plug",
+  //   code: "3483333",
+  //   model: "Splendor",
+  //   hsn: "3483333",
+  //   mrp: "890",
+  //   gst: "18",
+  //   before: "120.00",
+  //   disc: "0",
+  //   after: "120.00",
+  //   qty: "3",
+  //   taxable: "360.00",
+  //   total: "425.00",
+  // },
+  // {
+  //   sn: 7,
+  //   part: "Chain Sprocket",
+  //   code: "3484444",
+  //   model: "Pulsar",
+  //   hsn: "3484444",
+  //   mrp: "7200",
+  //   gst: "18",
+  //   before: "1150.00",
+  //   disc: "5",
+  //   after: "1092.50",
+  //   qty: "1",
+  //   taxable: "1092.50",
+  //   total: "1288.00",
+  // },
+  // {
+  //   sn: 8,
+  //   part: "Side Mirror",
+  //   code: "3485555",
+  //   model: "Apache",
+  //   hsn: "3485555",
+  //   mrp: "1500",
+  //   gst: "18",
+  //   before: "280.00",
+  //   disc: "0",
+  //   after: "280.00",
+  //   qty: "2",
+  //   taxable: "560.00",
+  //   total: "660.00",
+  // },
+  // {
+  //   sn: 9,
+  //   part: "Indicator Set",
+  //   code: "3486666",
+  //   model: "Splendor",
+  //   hsn: "3486666",
+  //   mrp: "2200",
+  //   gst: "18",
+  //   before: "350.00",
+  //   disc: "0",
+  //   after: "350.00",
+  //   qty: "1",
+  //   taxable: "350.00",
+  //   total: "413.00",
+  // },
+  // {
+  //   sn: 10,
+  //   part: "Battery",
+  //   code: "3487777",
+  //   model: "Pulsar",
+  //   hsn: "3487777",
+  //   mrp: "9500",
+  //   gst: "18",
+  //   before: "2200.00",
+  //   disc: "5",
+  //   after: "2090.00",
+  //   qty: "1",
+  //   taxable: "2090.00",
+  //   total: "2466.00",
+  // },
 
   // ---- Repeating pattern for pagination testing ----
-  ...Array.from({ length: 1 }, (_, i) => ({
+  ...Array.from({ length: 5 }, (_, i) => ({
     sn: i + 11,
     part: "General Spare Part",
     code: `34900${i + 11}`,
@@ -411,9 +436,27 @@ const drawTableRow = ({ doc, x, y, row, columnWidths, isHeader = false }) => {
 
   // Calculate row height
   row.forEach((cell, i) => {
-    const height = doc.heightOfString(cell, {
-      width: columnWidths[i] - 6,
-    });
+    let height = 0;
+    const cellWidth = columnWidths[i] - 6;
+
+    if (i === 1 && typeof cell === "object") {
+      // height of name
+      const nameHeight = doc.heightOfString(cell.name, {
+        width: cellWidth,
+      });
+
+      // height of code
+      const codeHeight = doc.heightOfString(cell.code, {
+        width: cellWidth,
+      });
+
+      height = nameHeight + codeHeight;
+    } else {
+      height = doc.heightOfString(String(cell), {
+        width: cellWidth,
+      });
+    }
+
     maxHeight = Math.max(maxHeight, height + 10);
   });
 
@@ -432,14 +475,45 @@ const drawTableRow = ({ doc, x, y, row, columnWidths, isHeader = false }) => {
   // Draw text (NO vertical borders)
   let currentX = x;
   row.forEach((cell, i) => {
-    doc
-      .font(isHeader ? FONT_SEMIBOLD : FONT_REGULAR)
-      .fillColor("#333333")
-      .fontSize(7)
-      .text(cell, currentX + 3, y + 5, {
-        width: columnWidths[i] - 6,
-        align: i === 1 ? "left" : "center",
+    const cellX = currentX + 3;
+    const cellY = y + 5;
+    const cellWidth = columnWidths[i] - 6;
+
+    if (i === 1 && typeof cell === "object") {
+      // Draw Name (normal color)
+      doc
+        .font(FONT_REGULAR)
+        .fillColor("#333333")
+        .fontSize(7)
+        .text(cell.name, cellX, cellY, {
+          width: cellWidth,
+          align: "left",
+        });
+
+      // Get height of name
+      const nameHeight = doc.heightOfString(cell.name, {
+        width: cellWidth,
       });
+
+      // Draw Code (different color)
+      doc
+        .font(FONT_SEMIBOLD)
+        .fillColor("#111") // 👈 change color here
+        .fontSize(7)
+        .text(cell.code, cellX, cellY + nameHeight, {
+          width: cellWidth,
+          align: "left",
+        });
+    } else {
+      doc
+        .font(isHeader ? FONT_SEMIBOLD : FONT_REGULAR)
+        .fillColor("#333333")
+        .fontSize(7)
+        .text(cell, cellX, cellY, {
+          width: cellWidth,
+          align: i === 1 ? "left" : "center",
+        });
+    }
 
     currentX += columnWidths[i];
   });
@@ -483,8 +557,7 @@ const drawSparePartsTable = ({
   rows.forEach((item) => {
     const rowData = [
       String(item.sn),
-      item.part,
-      item.code,
+      { name: item.part, code: item.code },
       item.model,
       item.hsn,
       item.mrp,
@@ -503,7 +576,7 @@ const drawSparePartsTable = ({
     if (y + estimatedHeight > doc.page.height - bottomMargin) {
       doc.addPage();
 
-      y = topMargin + headerHeight;
+      y = topMargin + headerHeight - 50;
 
       //  redraw header on new page
       y += drawTableRow({
@@ -555,7 +628,12 @@ const sparePartInvoice = (res) => {
   doc.pipe(res);
 
   doc.on("pageAdded", () => {
-    drawHeaderColumns(doc, fromData, buyerData, consigneeData);
+    drawHeaderColumns(
+      doc,
+      repeatFromData,
+      repeatBuyerData,
+      repeatConsigneeData,
+    );
   });
 
   /* ---------- HEADER IMAGES ---------- */
@@ -686,7 +764,7 @@ const sparePartInvoice = (res) => {
   //   Price total box
 
   const totalAmountInWords =
-    "Amount in words : One Lakh Twenty Three Thousand Eight Hundred Thirty Rupees Only";
+    "Amount in words : Five Lakh Forty Four Thousand Four Hundred Nine Rupees And Fifty Eight Paise Only Fifty Eight Paise Only";
 
   const taxTotal = "1279650.00";
   const amountTotal = "12790.00";
@@ -695,16 +773,16 @@ const sparePartInvoice = (res) => {
 
   const totalPriceBoxWidth = sparePartsColumnWidths.reduce((a, b) => a + b, 0);
 
-  const textHeight = doc.heightOfString(totalAmountInWords, {
-    width: totalPriceBoxWidth - padding * 2,
+  const heightOfAmountInWords = doc.heightOfString(totalAmountInWords, {
+    width: 350,
   });
 
-  let totalBoxHeight = textHeight + padding * 2;
+  let totalBoxHeight = heightOfAmountInWords + padding * 2;
   let totalPriceBoxY = tableEndY + 10;
 
-  if (totalPriceBoxY + 40 + totalBoxHeight > doc.page.height - 40) {
+  if (totalPriceBoxY + totalBoxHeight > doc.page.height - 40) {
     doc.addPage();
-    totalPriceBoxY = headerHeight + 10; // reset Y for new page
+    totalPriceBoxY = headerHeight - 45; // reset Y for new page
   }
 
   doc.font(FONT_BOLD).fontSize(8);
@@ -714,7 +792,7 @@ const sparePartInvoice = (res) => {
   doc
     .fillColor("#333333")
     .text(totalAmountInWords, x + padding, totalPriceBoxY + padding, {
-      width: totalPriceBoxWidth - padding * 2,
+      width: 350,
     });
 
   const widthOfRightTotal = doc.widthOfString(`₹ ${amountTotal}`, {
@@ -738,7 +816,7 @@ const sparePartInvoice = (res) => {
   // GST Table
 
   let gstHeaderHeight = 0;
-  let gstTableY = totalPriceBoxY + 33;
+  let gstTableY = totalPriceBoxY + heightOfAmountInWords + 20;
 
   gstTableRows.forEach((cell, i) => {
     const height = doc.heightOfString(cell, {
@@ -769,7 +847,7 @@ const sparePartInvoice = (res) => {
 
   if (gstTableY + totalGstTableHeight > doc.page.height - 40) {
     doc.addPage();
-    gstTableY = headerHeight + 10;
+    gstTableY = headerHeight - 45;
   }
 
   doc
@@ -787,7 +865,7 @@ const sparePartInvoice = (res) => {
     doc
       .font(FONT_BOLD)
       .fillColor("#333333")
-      .fontSize(7)
+      .fontSize(8)
       .text(cell, tableCellX + 5, gstTableY + 4, {
         width: gstTableColumnWidths[i] - 6,
       });
@@ -824,7 +902,7 @@ const sparePartInvoice = (res) => {
       doc
         .font(i === 0 ? FONT_SEMIBOLD : FONT_REGULAR)
         .fillColor("#333333")
-        .fontSize(7)
+        .fontSize(8)
         .text(String(cell ?? ""), rowX + 5, tableRowY + 4, {
           width: gstTableColumnWidths[i] - 6,
         });
@@ -837,14 +915,25 @@ const sparePartInvoice = (res) => {
   // All total table
 
   const summaryData = [
-    { label: "Tax Value", value: "₹ 754.17" },
-    { label: "Tax Amount", value: "₹ 4944.83" },
-    { label: "Round Off", value: "₹ 4944.83" },
-    { label: "Net Total", value: "₹ 0.00" },
+    { label: "CGST 2.5%", value: "-" },
+    { label: "SGST 2.5%", value: "377.83" },
+    { label: "IGST 5%", value: "-" },
+    { label: "CGST 9%", value: "377.83" },
+    { label: "SGST 9%", value: "377.83" },
+    { label: "IGST 9%", value: "377.83" },
+    { label: "Tax Total", value: "754.17" },
+    { label: "Net Total", value: "4944.83" },
+    { label: "Paid Total", value: "4944.83" },
+    { label: "Balance Total", value: "4944.83" },
   ];
 
+  let currentPage = 1;
+
+  let summaryEndedOnNewPage = false;
+  let summaryEndPage = currentPage;
+
   const boxX = pageWidth - 140;
-  const boxY = gstTableY + 43;
+  const boxY = gstTableY;
   const boxTotalWidth = 120;
 
   const rowHeight = 18.4;
@@ -855,31 +944,39 @@ const sparePartInvoice = (res) => {
   let totalPriceY = boxY;
 
   summaryData.forEach((item, index) => {
-    // Label
-    doc
-      .font(FONT_SEMIBOLD)
-      .fillColor("#333333")
-      .text(item.label, boxX + 8, totalPriceY, {
-        width: labelWidth,
-      });
+    if (totalPriceY + rowHeight > doc.page.height - 40) {
+      doc.addPage();
+      totalPriceY = headerHeight - 50;
 
-    // Value (right aligned)
-    doc
-      .font(index === summaryData.length - 1 ? FONT_SEMIBOLD : FONT_REGULAR)
-      .text(item.value, boxX + labelWidth, totalPriceY, {
-        width: valueWidth - 8,
-        align: "right",
-      });
+      summaryEndedOnNewPage = true;
+      summaryEndPage = currentPage;
+    }
+    if (Number(item?.value) > 0 || item?.label == "Balance Total") {
+      // Label
+      doc
+        .font(FONT_SEMIBOLD)
+        .fillColor("#333333")
+        .text(item.label, boxX + 8, totalPriceY, {
+          width: labelWidth,
+        });
+      // Value (right aligned)
+      doc
+        .font(index === summaryData.length - 1 ? FONT_SEMIBOLD : FONT_REGULAR)
+        .text(`₹${item.value}`, boxX + labelWidth, totalPriceY, {
+          width: valueWidth - 8,
+          align: "right",
+        });
 
-    // Divider (skip last)
-    doc
-      .moveTo(boxX + 6, totalPriceY + rowHeight - 4)
-      .lineTo(boxX + boxTotalWidth - 6, totalPriceY + rowHeight - 4)
-      .strokeColor("#E2E6EA")
-      .lineWidth(0.3)
-      .stroke();
+      // Divider (skip last)
+      doc
+        .moveTo(boxX + 6, totalPriceY + rowHeight - 4)
+        .lineTo(boxX + boxTotalWidth - 6, totalPriceY + rowHeight - 4)
+        .strokeColor("#E2E6EA")
+        .lineWidth(0.3)
+        .stroke();
 
-    totalPriceY += rowHeight;
+      totalPriceY += rowHeight;
+    }
   });
 
   doc
@@ -942,16 +1039,11 @@ const sparePartInvoice = (res) => {
 
   if (textY + estimatedHeight > doc.page.height - bottomMargin) {
     doc.addPage();
-    const headerHeight = drawHeaderColumns(
-      doc,
-      fromData,
-      buyerData,
-      consigneeData,
-    );
+    const height = 100;
 
-    termsY = topMargin + headerHeight;
-    bankY = topMargin + headerHeight;
-    signY = topMargin + headerHeight;
+    termsY = topMargin + height;
+    bankY = topMargin + height;
+    signY = topMargin + height;
   }
 
   // redraw header
