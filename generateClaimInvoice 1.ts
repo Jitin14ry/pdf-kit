@@ -3,6 +3,8 @@ import fs from "fs";
 import path from "path";
 import PDFDocument from "pdfkit";
 import { v4 as uuidv4 } from "uuid";
+import moment from "moment";
+import https from "https";
 
 /* ---------------- AWS CONFIG ---------------- */
 const s3 = new AWS.S3({
@@ -13,7 +15,7 @@ const s3 = new AWS.S3({
 
 /* ---------------- CONSTANTS ---------------- */
 const LABEL_COLOR = "#333333";
-const VALUE_COLOR = "#888888";
+const VALUE_COLOR = "#666666";
 const BORDER_COLOR = "#C7CED5";
 
 const FONT_REGULAR = "Inter_24pt-Regular";
@@ -124,72 +126,49 @@ const repeatingHeader = ({
 
   doc
     .font(FONT_REGULAR)
-    .fillColor("#888888")
+    .fillColor("#666666")
     .fontSize(7)
     .text("(A Unit Of Ratnashil Online Services Pvt. Ltd.)", x, y + 78);
 
   /* ---------- DIVIDER ---------- */
   doc
-    .moveTo(0, 115)
-    .lineTo(140, 115)
+    .moveTo(0, 113)
+    .lineTo(140, 113)
     .strokeColor("#CA2A01")
     .lineWidth(1)
     .stroke();
 
   /* ---------- RIGHT HEADER ---------- */
-  doc.image(
-    path.join(__dirname, "../public/SGInvoiceLogo.png"),
-    boxWidth - 96,
-    18,
-    { width: 23 },
-  );
-
-  doc
-    .font(FONT_SEMIBOLD)
-    .fillColor("#E04B24")
-    .fontSize(15)
-    .text("smart garage", 27, y, {
-      width: boxWidth,
-      align: "right",
-    });
+  doc.image(path.join(__dirname, "../public/SGLogo.png"), boxWidth - 93, 18, {
+    width: 125,
+  });
 
   doc
     .font(FONT_BOLD)
-    .fillColor("#060606")
-    .fontSize(20)
+    .fillColor("#454D55")
+    .fontSize(16)
     .text(invoiceType, 27, y + 22, { width: boxWidth, align: "right" });
 
   if (invoiceType != "Proforma Invoice") {
     doc
       .font(FONT_BOLD)
       .fontSize(9)
-      .text(invoice?.invoice_number, 27, y + 50, {
+      .text(invoice?.invoice_number, 27, y + 43, {
         width: boxWidth,
         align: "right",
       });
   }
 
-  /* ---------- ADDRESS ---------- */
-  doc.image(
-    path.join(__dirname, "../public/InvoiceLocationIcon.png"),
-    boxWidth + 17,
-    invoiceType != "Proforma Invoice" ? y + 65 : y + 54,
-    { width: 10 },
-  );
+  const date = moment(invoice?.invoice_date).format("DD MMM YYYY");
 
   doc
     .font(FONT_REGULAR)
-    .fillColor("#333333")
-    .fontSize(7)
-    .text(
-      serviceCenterAddress,
-      boxWidth - 185,
-      invoiceType != "Proforma Invoice" ? y + 65 : y + 54,
-      {
-        width: 200,
-        align: "right",
-      },
-    );
+    .fillColor("#666666")
+    .fontSize(8)
+    .text(date, 0, invoiceType != "Proforma Invoice" ? y + 56 : y + 45, {
+      width: boxWidth + 26,
+      align: "right",
+    });
 };
 
 const drawRow = ({
@@ -336,9 +315,7 @@ const drawSparePartsTable = ({
   rows.forEach((item: any) => {
     const rowData = [
       String(item.sn),
-      item.part,
-      item.code,
-      item.model,
+      { name: item.part, code: item.code },
       item.hsn,
       item.mrp,
       item.gst,
@@ -346,6 +323,7 @@ const drawSparePartsTable = ({
       item.disc,
       item.after,
       item.qty,
+      item.approved,
       item.taxable,
       item.total,
     ];
@@ -354,7 +332,8 @@ const drawSparePartsTable = ({
     if (y + estimatedHeight > doc.page.height - bottomMargin) {
       doc.addPage();
 
-      y = topMargin + headerHeight;
+      y = topMargin + headerHeight - 50;
+
       y += drawTableRow({
         doc,
         x,
@@ -405,13 +384,13 @@ const drawServiceTable = ({
     const rowData = [
       String(item.sn),
       item.part,
-      item.hsn,
       item.mrp,
       item.gst,
       item.before,
       item.disc,
       item.after,
       item.qty,
+      item.approved,
       item.taxable,
       item.total,
     ];
@@ -422,7 +401,7 @@ const drawServiceTable = ({
     if (y + estimatedHeight > doc.page.height - bottomMargin) {
       doc.addPage();
 
-      y = topMargin + headerHeight;
+      y = topMargin + headerHeight - 50;
 
       //  redraw header on new page
       y += drawTableRow({
@@ -450,15 +429,18 @@ const drawServiceTable = ({
 
 /* ---------------- MAIN GENERIC FUNCTION ---------------- */
 
-export const generateGstInvoiceAndUploadToS3 = async (invoiceData: any) => {
+export const generateClaimInvoice = async (invoiceData: any) => {
   const {
     invoice,
     SpareTotal,
     ServiceTotal,
     serviceCenterAddress,
     billerData,
+    repeatBillerData,
     sellerData,
+    repeatSellerData,
     buyerData,
+    repeatBuyerData,
     invoiceMeta,
     sparePartsHeaders,
     sparePartsColumnWidths,
@@ -472,9 +454,11 @@ export const generateGstInvoiceAndUploadToS3 = async (invoiceData: any) => {
     summaryData,
     totalAmountInWords,
     totalAmount,
+    taxableTotal,
     termsAndConditions,
     bankDetails,
     invoiceType,
+    signImage,
   } = invoiceData;
 
   const tempFilePath = path.join(
@@ -504,7 +488,7 @@ export const generateGstInvoiceAndUploadToS3 = async (invoiceData: any) => {
 
   doc.on("pageAdded", () => {
     repeatingHeader({ doc, invoice, invoiceType, serviceCenterAddress });
-    drawHeaderColumns(doc, billerData, sellerData, buyerData);
+    drawHeaderColumns(doc, repeatBillerData, repeatSellerData, repeatBuyerData);
   });
 
   const pageWidth = doc.page.width;
@@ -545,9 +529,9 @@ export const generateGstInvoiceAndUploadToS3 = async (invoiceData: any) => {
   if (invoiceMeta.qrImagePath) {
     doc.image(
       path.join(__dirname, invoiceMeta.qrImagePath),
-      pageWidth - 86,
-      headerHeight + 42,
-      { width: 60 },
+      pageWidth - 75,
+      headerHeight + 7,
+      { width: 50 },
     );
   }
 
@@ -643,41 +627,50 @@ export const generateGstInvoiceAndUploadToS3 = async (invoiceData: any) => {
     0,
   );
 
-  const textHeight = doc.heightOfString(totalAmountInWords, {
-    width: totalPriceBoxWidth - padding * 2,
+  const heightOfAmountInWords = doc.heightOfString(totalAmountInWords, {
+    width: 300,
   });
 
-  const totalBoxHeight = textHeight + padding * 2;
+  const totalBoxHeight = heightOfAmountInWords + padding * 2;
 
   let totalPriceBoxY = servicesTableEndY + 25;
 
-  if (servicesTableEndY + 40 + totalBoxHeight > doc.page.height - 40) {
+  if (servicesTableEndY + totalBoxHeight > doc.page.height - 40) {
     doc.addPage();
-    totalPriceBoxY = headerHeight + 10; // reset Y for new page
+    totalPriceBoxY = headerHeight - 50; // reset Y for new page
   }
 
   doc.font(FONT_BOLD).fontSize(8);
 
-  doc
-    .rect(x + padding, totalPriceBoxY, boxWidth, totalBoxHeight)
-    .fill("#F6F8FC");
+  doc.rect(x, totalPriceBoxY, boxWidth, totalBoxHeight).fill("#F6F8FC");
 
   doc
     .fillColor("#333333")
     .text(totalAmountInWords, x + padding, totalPriceBoxY + padding, {
-      width: totalPriceBoxWidth - padding * 2,
+      width: 350,
+    });
+
+  const widthOfRightTotal = doc.widthOfString(`₹ ${totalAmount}`, {
+    width: totalPriceBoxWidth - 5,
+  });
+
+  doc
+    .fillColor("#333333")
+    .text(`Total: ₹ ${taxableTotal}`, x, totalPriceBoxY + padding, {
+      width: totalPriceBoxWidth - widthOfRightTotal - 20,
+      align: "right",
     });
 
   doc
     .fillColor("#333333")
-    .text(`Total: ₹ ${totalAmount}`, x, totalPriceBoxY + padding, {
+    .text(`₹ ${totalAmount}`, x, totalPriceBoxY + padding, {
       width: totalPriceBoxWidth - 5,
       align: "right",
     });
 
   /* ---------- GST TABLE ---------- */
   let gstHeaderHeight = 0;
-  let gstTableY = totalPriceBoxY + 33;
+  let gstTableY = totalPriceBoxY + heightOfAmountInWords + 25;
 
   gstTableHeaders.forEach((cell: any, i: any) => {
     const h = doc.heightOfString(cell, {
@@ -708,7 +701,7 @@ export const generateGstInvoiceAndUploadToS3 = async (invoiceData: any) => {
 
   if (gstTableY + totalGstTableHeight > doc.page.height - 40) {
     doc.addPage();
-    gstTableY = headerHeight + 10;
+    gstTableY = headerHeight - 50;
   }
 
   doc
@@ -726,8 +719,8 @@ export const generateGstInvoiceAndUploadToS3 = async (invoiceData: any) => {
     doc
       .font(FONT_SEMIBOLD)
       .fillColor("#333333")
-      .fontSize(7)
-      .text(cell, tableCellX + 3, gstTableY + 4, {
+      .fontSize(8)
+      .text(cell, tableCellX + 5, gstTableY + 4, {
         width: gstTableColumnWidths[i] - 6,
       });
 
@@ -755,8 +748,8 @@ export const generateGstInvoiceAndUploadToS3 = async (invoiceData: any) => {
       doc
         .font(i === 0 ? FONT_SEMIBOLD : FONT_REGULAR)
         .fillColor("#333333")
-        .fontSize(7)
-        .text(String(cell ?? ""), rowX + 3, tableRowY + 4, {
+        .fontSize(8)
+        .text(String(cell ?? ""), rowX + 5, tableRowY + 4, {
           width: gstTableColumnWidths[i] - 6,
         });
 
@@ -785,13 +778,18 @@ export const generateGstInvoiceAndUploadToS3 = async (invoiceData: any) => {
   summaryData.forEach((item: any, index: number) => {
     if (totalPriceY + rowHeight > doc.page.height - 40) {
       doc.addPage();
-      totalPriceY = headerHeight + 10;
+      totalPriceY = headerHeight - 50;
 
       summaryEndedOnNewPage = true;
       summaryEndPage = currentPage;
     }
 
-    if (Number(item?.value) > 0) {
+    if (
+      Number(item?.value) > 0 ||
+      item?.label === "Balance Total" ||
+      item?.label === "Pending Do" ||
+      item?.label === "File Charge"
+    ) {
       // Label
       doc
         .font(FONT_SEMIBOLD)
@@ -827,13 +825,68 @@ export const generateGstInvoiceAndUploadToS3 = async (invoiceData: any) => {
 
   // terms and conditon data
 
-  let termsStartY;
+  doc.fontSize(7);
+
+  let bankStartX = 20;
+  let bankStartY;
 
   if (summaryEndedOnNewPage) {
-    termsStartY = headerHeight + 25;
+    bankStartY = headerHeight + 10;
   } else {
-    termsStartY = tableRowY + 30;
+    bankStartY = tableRowY + 15;
   }
+
+  let bankY = bankStartY;
+
+  const getBankHeight = () => {
+    let height = 0;
+
+    bankDetails.forEach((item: any) => {
+      const combinedText = `${item.label} ${item.value}`;
+
+      const lineHeight = doc.heightOfString(combinedText, {
+        width: boxWidth - 130,
+      });
+
+      height += lineHeight + 4;
+    });
+
+    return height;
+  };
+
+  const totalBankHeight = getBankHeight();
+
+  if (bankY + totalBankHeight > doc.page.height - 40) {
+    doc.addPage();
+    bankY = headerHeight - 50;
+  }
+
+  doc
+    .font(FONT_BOLD)
+    .fillColor("#333333")
+    .fontSize(8)
+    .text("BANK DETAILS", bankStartX, bankY);
+
+  bankDetails.forEach((item: any, idx: any) => {
+    const text = `${item.label} ${item.value}`;
+    const labelWidth = 75;
+
+    const lineHeight = doc.heightOfString(text, {
+      width: boxWidth - 130,
+    });
+
+    doc
+      .font(FONT_SEMIBOLD)
+      .fillColor("#333333")
+      .text(item.label, bankStartX, bankY + 15);
+
+    doc
+      .font(FONT_REGULAR)
+      .fillColor("#333333")
+      .text(item.value, labelWidth + bankStartX, bankY + 15);
+
+    bankY += lineHeight + 4;
+  });
 
   const getTermsHeight = () => {
     let height = 0;
@@ -852,40 +905,66 @@ export const generateGstInvoiceAndUploadToS3 = async (invoiceData: any) => {
 
   const totalTermsHeight = getTermsHeight();
 
-  if (termsStartY + totalTermsHeight > doc.page.height - 40) {
+  let termsY = bankY + 50;
+  let termsStartX = 20;
+
+  if (termsY + totalTermsHeight > doc.page.height - 40) {
     doc.addPage();
-    termsStartY = headerHeight + 10;
+    termsY = headerHeight - 22;
   }
 
-  let termsY = termsStartY;
-
-  doc.font(FONT_BOLD).text("TERMS & CONDITIONS", 20, termsY - 15);
+  doc
+    .font(FONT_BOLD)
+    .fillColor("#333333")
+    .fontSize(8)
+    .text("TERMS & CONDITIONS", termsStartX, termsY - 15);
 
   termsAndConditions.forEach((text: any, index: any) => {
     const numberedText = `${index + 1}. ${text}`;
 
     const textHeight = doc.heightOfString(numberedText, {
-      width: boxWidth - 130,
+      width: boxWidth - 20,
     });
 
     doc
       .font(FONT_REGULAR)
       .fillColor("#333333")
-      .text(numberedText, 20, termsY, { width: boxWidth - 130 });
+      .text(numberedText, termsStartX, termsY, { width: boxWidth });
 
     termsY += textHeight + 3;
   });
 
-  doc.font(FONT_SEMIBOLD).text("Declaration : ", 20, termsY + 10);
+  const widthOfDec = doc.font(FONT_SEMIBOLD).widthOfString("Declaration : ");
+
+  doc.font(FONT_SEMIBOLD).text("Declaration : ", termsStartX, termsY + 10);
 
   doc
     .font(FONT_REGULAR)
     .text(
       "We Declare that this invoice shows the actual price of the goods described and that all particulars are true and correct.",
-      63,
+      widthOfDec + termsStartX,
       termsY + 10,
-      { width: boxWidth - 130 },
+      { width: boxWidth },
     );
+
+  doc.font(FONT_BOLD).text("CUSTOMER SIGNATURE", termsStartX, termsY + 30);
+
+  if (signImage) {
+    const imageBuffer: any = await new Promise((resolve, reject) => {
+      https
+        .get(signImage, (res) => {
+          const data: any = [];
+
+          res.on("data", (chunk) => data.push(chunk));
+          res.on("end", () => resolve(Buffer.concat(data)));
+        })
+        .on("error", reject);
+    });
+
+    doc.roundedRect(termsStartX, termsY + 50, 80, 80, 4).clip();
+
+    doc.image(imageBuffer, termsStartX, termsY + 50, { width: 80, height: 80 });
+  }
 
   /* ---------- PAGE NUMBERS ---------- */
 

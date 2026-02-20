@@ -14,7 +14,7 @@ const FONT_BOLD = "Inter-Bold";
 
 /* ---------- CONSTANTS ---------- */
 const LABEL_COLOR = "#333333";
-const VALUE_COLOR = "#888888";
+const VALUE_COLOR = "#666666";
 const BORDER_COLOR = "#C7CED5";
 
 const labelText = (doc, text, x, y) => {

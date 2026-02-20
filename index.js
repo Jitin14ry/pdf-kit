@@ -14,7 +14,7 @@ const PORT = 3000;
 
 // Route to generate and download PDF
 app.get("/download-pdf", (req, res) => {
-  sparePartInvoice(res);
+  jobCard(res);
 });
 
 app.listen(PORT, () => {

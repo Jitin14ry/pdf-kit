@@ -1,6 +1,7 @@
 import PDFDocument from "pdfkit";
 import path from "path";
 import { fileURLToPath } from "url";
+import https from "https";
 
 // Manually define `__dirname`
 const __filename = fileURLToPath(import.meta.url);
@@ -105,27 +106,6 @@ const buyerData = [
 
 /* ---------- HELPER FUNCTIONS ---------- */
 
-// Draw single label-value row
-const drawRow = ({
-  doc,
-  label,
-  value,
-  x,
-  labelWidth = 54,
-  valueWidth = 120,
-}) => {
-  doc.fillColor(LABEL_COLOR).font(FONT_SEMIBOLD).text(label, x);
-
-  doc
-    .fillColor(VALUE_COLOR)
-    .font(FONT_REGULAR)
-    .text(value, x + labelWidth, doc.y - doc.currentLineHeight(), {
-      width: valueWidth,
-    });
-
-  doc.moveDown(0.4);
-};
-
 const repeatingHeader = (doc, contactInfo, invoiceType) => {
   const x = 20;
   const y = 20;
@@ -195,7 +175,7 @@ const repeatingHeader = (doc, contactInfo, invoiceType) => {
 
   doc
     .font(FONT_REGULAR)
-    .fillColor("#888888")
+    .fillColor("#666666")
     .fontSize(7)
     .text("(A Unit Of Ratnashil Online Services Pvt. Ltd.)", x, y + 78);
 
@@ -245,16 +225,36 @@ const repeatingHeader = (doc, contactInfo, invoiceType) => {
   //   { width: 10 },
   // );
 
+  const date = "28th Jul 2025";
+
   doc
     .font(FONT_SEMIBOLD)
     .fillColor("#666666")
     .fontSize(8)
-    .text(
-      "28th Jul 2025",
-      0,
-      invoiceType != "Proforma Invoice" ? y + 56 : y + 45,
-      { width: boxWidth + 26, align: "right" },
-    );
+    .text(date, 0, invoiceType != "Proforma Invoice" ? y + 56 : y + 45, {
+      width: boxWidth + 26,
+      align: "right",
+    });
+};
+
+const drawRow = ({
+  doc,
+  label,
+  value,
+  x,
+  labelWidth = 54,
+  valueWidth = 120,
+}) => {
+  doc.fillColor(LABEL_COLOR).font(FONT_SEMIBOLD).text(label, x);
+
+  doc
+    .fillColor(VALUE_COLOR)
+    .font(FONT_REGULAR)
+    .text(value, x + labelWidth, doc.y - doc.currentLineHeight(), {
+      width: valueWidth,
+    });
+
+  doc.moveDown(0.4);
 };
 
 // Draw a complete column from config
@@ -325,16 +325,16 @@ const sparePartsHeaders = [
 
 const sparePartsColumnWidths = [
   20, // SN
-  125, // Spare Parts // Code
-  45, // HSN
+  145, // Spare Parts // Code
+  49, // HSN
   38, // MRP
   30, // GST
   60, // Unit Price Before
-  42, // Discount
-  65, // Unit Price After
+  37, // Discount
+  60, // Unit Price After
   22, // Qty
-  52, // Taxable Value
-  52, // Net Total
+  45, // Taxable Value
+  45, // Net Total
 ];
 
 const sparePartsRows = [
@@ -422,76 +422,76 @@ const sparePartsRows = [
     taxable: "360.00",
     total: "425.00",
   },
-  {
-    sn: 7,
-    part: "Chain Sprocket",
-    code: "68004M69R01",
-    hsn: "3484444",
-    mrp: "7200",
-    gst: "18",
-    before: "1150.00",
-    disc: "5",
-    after: "1092.50",
-    qty: "1",
-    taxable: "1092.50",
-    total: "1288.00",
-  },
-  {
-    sn: 8,
-    part: "Side Mirror",
-    code: "53200M69R00",
-    hsn: "3485555",
-    mrp: "1500",
-    gst: "18",
-    before: "280.00",
-    disc: "0",
-    after: "280.00",
-    qty: "2",
-    taxable: "560.00",
-    total: "660.00",
-  },
-  {
-    sn: 9,
-    part: "Indicator Set",
-    code: "22400M66R00",
-    hsn: "3486666",
-    mrp: "2200",
-    gst: "18",
-    before: "350.00",
-    disc: "0",
-    after: "350.00",
-    qty: "1",
-    taxable: "350.00",
-    total: "413.00",
-  },
-  {
-    sn: 10,
-    part: "Battery",
-    code: "13400M68P10",
-    hsn: "3487777",
-    mrp: "9500",
-    gst: "18",
-    before: "2200.00",
-    disc: "5",
-    after: "2090.00",
-    qty: "1",
-    taxable: "2090.00",
-    total: "2466.00",
-  },
-  {
-    sn: 10,
-    part: "Battery",
-    code: "57711M69R00",
-    hsn: "3487777",
-    mrp: "9500",
-    gst: "18",
-    before: "2200.00",
-    disc: "5",
-    after: "2090.00",
-    qty: "1",
-    taxable: "2090.00",
-    total: "2466.00",
-  },
+  // {
+  //   sn: 7,
+  //   part: "Chain Sprocket",
+  //   code: "68004M69R01",
+  //   hsn: "3484444",
+  //   mrp: "7200",
+  //   gst: "18",
+  //   before: "1150.00",
+  //   disc: "5",
+  //   after: "1092.50",
+  //   qty: "1",
+  //   taxable: "1092.50",
+  //   total: "1288.00",
+  // },
+  // {
+  //   sn: 8,
+  //   part: "Side Mirror",
+  //   code: "53200M69R00",
+  //   hsn: "3485555",
+  //   mrp: "1500",
+  //   gst: "18",
+  //   before: "280.00",
+  //   disc: "0",
+  //   after: "280.00",
+  //   qty: "2",
+  //   taxable: "560.00",
+  //   total: "660.00",
+  // },
+  // {
+  //   sn: 9,
+  //   part: "Indicator Set",
+  //   code: "22400M66R00",
+  //   hsn: "3486666",
+  //   mrp: "2200",
+  //   gst: "18",
+  //   before: "350.00",
+  //   disc: "0",
+  //   after: "350.00",
+  //   qty: "1",
+  //   taxable: "350.00",
+  //   total: "413.00",
+  // },
+  // {
+  //   sn: 10,
+  //   part: "Battery",
+  //   code: "13400M68P10",
+  //   hsn: "3487777",
+  //   mrp: "9500",
+  //   gst: "18",
+  //   before: "2200.00",
+  //   disc: "5",
+  //   after: "2090.00",
+  //   qty: "1",
+  //   taxable: "2090.00",
+  //   total: "2466.00",
+  // },
+  // {
+  //   sn: 10,
+  //   part: "Battery",
+  //   code: "57711M69R00",
+  //   hsn: "3487777",
+  //   mrp: "9500",
+  //   gst: "18",
+  //   before: "2200.00",
+  //   disc: "5",
+  //   after: "2090.00",
+  //   qty: "1",
+  //   taxable: "2090.00",
+  //   total: "2466.00",
+  // },
   // ---- Repeating pattern for pagination testing ----
   ...Array.from({ length: 2 }, (_, i) => ({
     sn: i + 11,
@@ -517,7 +517,7 @@ const servicesHeaders = [
   "MRP",
   "GST%",
   "Unit Price\n(Before Disc.)",
-  "Discount %",
+  "Discount\n%",
   "Unit Price\n(After Disc.)",
   "Qty.",
   "Taxable\nValue",
@@ -526,15 +526,15 @@ const servicesHeaders = [
 
 const servicesColumnWidths = [
   20, // SN
-  170, // Spare Parts (+25)
+  193, // Spare Parts (+25)
   38, // MRP
   30, // GST
   60, // Unit Price Before
-  42, // Discount
-  65, // Unit Price After
+  37, // Discount
+  60, // Unit Price After
   22, // Qty
-  52, // Taxable Value
-  52, // Net Total
+  45, // Taxable Value
+  45, // Net Total
 ];
 
 const servicesPartsRows = [
@@ -765,7 +765,6 @@ const drawSparePartsTable = ({
 }) => {
   const topMargin = 10;
   const bottomMargin = 40;
-
   let y = startY;
 
   //  Draw header initially
@@ -896,9 +895,12 @@ const drawServiceTable = ({
   return y;
 };
 
+const signImage =
+  "https://pikpart-testing.s3.ap-south-1.amazonaws.com/1000001880.jpg";
+
 /* ---------- MAIN PDF FUNCTION ---------- */
 
-const gstInvoice = (res) => {
+const gstInvoice = async (res) => {
   const doc = new PDFDocument({ size: "A4", margin: 10, bufferPages: true });
 
   const invoiceType = "Tax Invoice";
@@ -944,7 +946,7 @@ const gstInvoice = (res) => {
   const columnWidth = boxWidth / 3;
 
   doc.fontSize(7);
-  ``;
+
   /* ---------- DRAW COLUMNS ---------- */
 
   repeatingHeader(doc, contactInfo, invoiceType);
@@ -956,11 +958,9 @@ const gstInvoice = (res) => {
     buyerData,
   );
 
-  const bottomY1 = headerHeight;
-
   /* ------------- After Border ---------------- */
 
-  const secondSectionY = bottomY1 + 8; // spacing after first section
+  const secondSectionY = headerHeight + 8; // spacing after first section
 
   const Section2Array1 = [
     { label: "Vehicle Type  ", value: "4W" },
@@ -1001,7 +1001,7 @@ const gstInvoice = (res) => {
   doc.image(
     path.join(__dirname, "assets/invoiceQRCode.png"),
     pageWidth - 75,
-    bottomY1 + 7,
+    headerHeight + 7,
     { width: 50 },
   );
 
@@ -1092,22 +1092,22 @@ const gstInvoice = (res) => {
 
   //   Price total box
 
-  const totalPriceText =
-    "Amount in words : One Lakh Twenty Three Thousand Eight Hundred Thirty Rupees Only";
+  const totalAmountInWords =
+    "Amount in words : Five Lakh Forty Four Thousand Four Hundred Nine Rupees And Fifty Eight Paise Only Fifty Eight Paise Only";
 
   const padding = 6;
 
   const totalPriceBoxWidth = sparePartsColumnWidths.reduce((a, b) => a + b, 0);
 
-  const textHeight = doc.heightOfString(totalPriceText, {
-    width: totalPriceBoxWidth - padding * 2,
+  const heightOfAmountInWords = doc.heightOfString(totalAmountInWords, {
+    width: 300,
   });
 
-  const totalBoxHeight = textHeight + padding * 2;
+  const totalBoxHeight = heightOfAmountInWords + padding * 2;
 
   let totalPriceBoxY = servicesTableEndY + 25;
 
-  if (servicesTableEndY + 40 + totalBoxHeight > doc.page.height) {
+  if (totalPriceBoxY + totalBoxHeight > doc.page.height - 40) {
     doc.addPage();
     totalPriceBoxY = headerHeight - 50; // reset Y for new page
   }
@@ -1118,14 +1118,14 @@ const gstInvoice = (res) => {
 
   doc
     .fillColor("#333333")
-    .text(totalPriceText, x + padding, totalPriceBoxY + padding, {
-      width: totalPriceBoxWidth - padding * 2,
+    .text(totalAmountInWords, x + padding, totalPriceBoxY + padding, {
+      width: 350,
     });
 
   const taxTotal = "1279650.00";
   const totalAmount = "12790.00";
 
-  const widthOfRightTotal = doc.widthOfString(`${totalAmount}`, {
+  const widthOfRightTotal = doc.widthOfString(`₹ ${totalAmount}`, {
     width: totalPriceBoxWidth - 5,
   });
 
@@ -1144,7 +1144,7 @@ const gstInvoice = (res) => {
     });
 
   let gstHeaderHeight = 0;
-  let gstTableY = totalPriceBoxY + 33;
+  let gstTableY = totalPriceBoxY + heightOfAmountInWords + 25;
 
   gstTableHeaders.forEach((cell, i) => {
     const h = doc.heightOfString(cell, {
@@ -1153,7 +1153,7 @@ const gstInvoice = (res) => {
     gstHeaderHeight = Math.max(gstHeaderHeight, h);
   });
 
-  gstHeaderHeight += 8; // padding
+  gstHeaderHeight += 8;
 
   let rowsHeight = 0;
 
@@ -1287,7 +1287,7 @@ const gstInvoice = (res) => {
       summaryEndedOnNewPage = true;
       summaryEndPage = currentPage;
     }
-    if (Number(item?.value) > 0) {
+    if (Number(item?.value) > 0 || item?.label == "Balance Total") {
       // Label
       doc
         .font(FONT_SEMIBOLD)
@@ -1373,7 +1373,7 @@ const gstInvoice = (res) => {
 
   bankDetails.forEach((item, idx) => {
     const text = `${item.label} ${item.value}`;
-    const labelWidth = 62;
+    const labelWidth = 75;
 
     const lineHeight = doc.heightOfString(text, {
       width: boxWidth - 130,
@@ -1382,13 +1382,11 @@ const gstInvoice = (res) => {
     doc
       .font(FONT_SEMIBOLD)
       .fillColor("#333333")
-      .fontSize(7)
       .text(item.label, bankStartX, bankY + 15);
 
     doc
       .font(FONT_REGULAR)
       .fillColor("#333333")
-      .fontSize(7)
       .text(item.value, labelWidth + bankStartX, bankY + 15);
 
     bankY += lineHeight + 4;
@@ -1465,6 +1463,22 @@ const gstInvoice = (res) => {
     .fontSize(8)
     .text("CUSTOMER SIGNATURE", termsStartX, termsY + 30);
 
+  if (signImage) {
+    const imageBuffer = await new Promise((resolve, reject) => {
+      https
+        .get(signImage, (res) => {
+          const data = [];
+
+          res.on("data", (chunk) => data.push(chunk));
+          res.on("end", () => resolve(Buffer.concat(data)));
+        })
+        .on("error", reject);
+    });
+
+    doc.roundedRect(termsStartX, termsY + 50, 80, 80, 4).clip();
+
+    doc.image(imageBuffer, termsStartX, termsY + 50, { width: 80, height: 80 });
+  }
   const range = doc.bufferedPageRange();
 
   for (let i = range.start; i < range.start + range.count; i++) {

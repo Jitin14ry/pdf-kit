@@ -138,9 +138,27 @@ const drawTableRow = ({
 
   // Calculate row height
   row.forEach((cell: any, i: any) => {
-    const height = doc.heightOfString(cell, {
-      width: columnWidths[i] - 6,
-    });
+    let height = 0;
+    const cellWidth = columnWidths[i] - 6;
+
+    if (i === 1 && typeof cell === "object") {
+      // height of name
+      const nameHeight = doc.heightOfString(cell.name, {
+        width: cellWidth,
+      });
+
+      // height of code
+      const codeHeight = doc.heightOfString(cell.code, {
+        width: cellWidth,
+      });
+
+      height = nameHeight + codeHeight;
+    } else {
+      height = doc.heightOfString(String(cell), {
+        width: cellWidth,
+      });
+    }
+
     maxHeight = Math.max(maxHeight, height + 10);
   });
 
@@ -159,14 +177,45 @@ const drawTableRow = ({
   // Draw text (NO vertical borders)
   let currentX = x;
   row.forEach((cell: any, i: any) => {
-    doc
-      .font(isHeader ? FONT_SEMIBOLD : FONT_REGULAR)
-      .fillColor("#333333")
-      .fontSize(7)
-      .text(cell, currentX + 3, y + 5, {
-        width: columnWidths[i] - 6,
-        align: i === 1 ? "left" : "center",
+    const cellX = currentX + 3;
+    const cellY = y + 5;
+    const cellWidth = columnWidths[i] - 6;
+
+    if (i === 1 && typeof cell === "object") {
+      // Draw Name (normal color)
+      doc
+        .font(FONT_REGULAR)
+        .fillColor("#333333")
+        .fontSize(7)
+        .text(cell.name, cellX, cellY, {
+          width: cellWidth,
+          align: "left",
+        });
+
+      // Get height of name
+      const nameHeight = doc.heightOfString(cell.name, {
+        width: cellWidth,
       });
+
+      // Draw Code (different color)
+      doc
+        .font(FONT_SEMIBOLD)
+        .fillColor("#111") // 👈 change color here
+        .fontSize(7)
+        .text(cell.code, cellX, cellY + nameHeight, {
+          width: cellWidth,
+          align: "left",
+        });
+    } else {
+      doc
+        .font(isHeader ? FONT_SEMIBOLD : FONT_REGULAR)
+        .fillColor("#333333")
+        .fontSize(7)
+        .text(cell, cellX, cellY, {
+          width: cellWidth,
+          align: i === 1 ? "left" : "center",
+        });
+    }
 
     currentX += columnWidths[i];
   });
@@ -213,8 +262,7 @@ const drawSparePartsTable = ({
   rows.forEach((item: any) => {
     const rowData = [
       String(item.sn),
-      item.part,
-      item.code,
+      { name: item.part, code: item.code },
       item.model,
       item.hsn,
       item.mrp,
@@ -233,7 +281,7 @@ const drawSparePartsTable = ({
     if (y + estimatedHeight > doc.page.height - bottomMargin) {
       doc.addPage();
 
-      y = topMargin + headerHeight;
+      y = topMargin + headerHeight - 50;
 
       //  redraw header on new page
       y += drawTableRow({
@@ -263,6 +311,9 @@ const drawSparePartsTable = ({
 
 export const generateSparePartsInvoice = async (invoiceData: any) => {
   const {
+    repeatSellerData,
+    repeatBuyerData,
+    repeatConsigneeData,
     sellerData,
     buyerData,
     consigneeData,
@@ -312,7 +363,12 @@ export const generateSparePartsInvoice = async (invoiceData: any) => {
   doc.pipe(writeStream);
 
   doc.on("pageAdded", () => {
-    drawHeaderColumns(doc, sellerData, buyerData, consigneeData);
+    drawHeaderColumns(
+      doc,
+      repeatSellerData,
+      repeatBuyerData,
+      repeatConsigneeData,
+    );
   });
 
   const pageWidth = doc.page.width;
@@ -404,17 +460,17 @@ export const generateSparePartsInvoice = async (invoiceData: any) => {
     0,
   );
 
-  const textHeight = doc.heightOfString(totalAmountInWords, {
-    width: totalPriceBoxWidth - padding * 2,
+  const heightOfAmountInWords = doc.heightOfString(totalAmountInWords, {
+    width: 350,
   });
 
-  let totalBoxHeight = textHeight + padding * 2;
+  let totalBoxHeight = heightOfAmountInWords + padding * 2;
 
   let totalPriceBoxY = tableEndY + 10;
 
-  if (totalPriceBoxY + 40 + totalBoxHeight > doc.page.height - 40) {
+  if (totalPriceBoxY + totalBoxHeight > doc.page.height - 40) {
     doc.addPage();
-    totalPriceBoxY = headerHeight + 10;
+    totalPriceBoxY = headerHeight - 45; // reset Y for new page
   }
 
   doc.font(FONT_BOLD).fontSize(8);
@@ -424,7 +480,7 @@ export const generateSparePartsInvoice = async (invoiceData: any) => {
   doc
     .fillColor("#333333")
     .text(totalAmountInWords, x + padding, totalPriceBoxY + padding, {
-      width: totalPriceBoxWidth - padding * 2,
+      width: 350,
     });
 
   const widthOfRightTotal = doc.widthOfString(`₹ ${totalAmount}`, {
@@ -447,7 +503,7 @@ export const generateSparePartsInvoice = async (invoiceData: any) => {
 
   /* ---------- GST TABLE ---------- */
   let gstHeaderHeight = 0;
-  let gstTableY = totalPriceBoxY + 33;
+  let gstTableY = totalPriceBoxY + heightOfAmountInWords + 20;
 
   gstTableHeaders.forEach((cell: any, i: any) => {
     const h = doc.heightOfString(cell, {
@@ -478,7 +534,7 @@ export const generateSparePartsInvoice = async (invoiceData: any) => {
 
   if (gstTableY + totalGstTableHeight > doc.page.height - 40) {
     doc.addPage();
-    gstTableY = headerHeight + 10;
+    gstTableY = headerHeight - 45;
   }
 
   doc
@@ -494,10 +550,10 @@ export const generateSparePartsInvoice = async (invoiceData: any) => {
 
   gstTableHeaders.forEach((cell: any, i: any) => {
     doc
-      .font(FONT_SEMIBOLD)
+      .font(FONT_BOLD)
       .fillColor("#333333")
-      .fontSize(7)
-      .text(cell, tableCellX + 3, gstTableY + 4, {
+      .fontSize(8)
+      .text(cell, tableCellX + 5, gstTableY + 4, {
         width: gstTableColumnWidths[i] - 6,
       });
 
@@ -526,7 +582,7 @@ export const generateSparePartsInvoice = async (invoiceData: any) => {
         .font(i === 0 ? FONT_SEMIBOLD : FONT_REGULAR)
         .fillColor("#333333")
         .fontSize(7)
-        .text(String(cell ?? ""), rowX + 3, tableRowY + 4, {
+        .text(String(cell ?? ""), rowX + 5, tableRowY + 4, {
           width: gstTableColumnWidths[i] - 6,
         });
 
@@ -555,7 +611,7 @@ export const generateSparePartsInvoice = async (invoiceData: any) => {
   summaryData.forEach((item: any, index: number) => {
     if (totalPriceY + rowHeight > doc.page.height - 40) {
       doc.addPage();
-      totalPriceY = headerHeight + 10;
+      totalPriceY = headerHeight - 50;
 
       summaryEndedOnNewPage = true;
       summaryEndPage = currentPage;
@@ -632,9 +688,9 @@ export const generateSparePartsInvoice = async (invoiceData: any) => {
   if (textY + estimatedHeight > doc.page.height - bottomMargin) {
     doc.addPage();
 
-    termsY = headerHeight + 10;
-    bankY = headerHeight + 10;
-    signY = headerHeight + 10;
+    termsY = headerHeight + 100;
+    bankY = headerHeight + 100;
+    signY = headerHeight + 100;
   }
 
   // redraw header

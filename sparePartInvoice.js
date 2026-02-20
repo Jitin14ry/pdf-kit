@@ -764,7 +764,7 @@ const sparePartInvoice = (res) => {
   //   Price total box
 
   const totalAmountInWords =
-    "Amount in words : Five Lakh Forty Four Thousand Four Hundred Nine Rupees And Fifty Eight Paise Only Fifty Eight Paise Only";
+    "Amount in words : Five Lakh Forty Four Thousand Four Hundred Nine Rupees And Fifty Eight";
 
   const taxTotal = "1279650.00";
   const amountTotal = "12790.00";
@@ -774,10 +774,10 @@ const sparePartInvoice = (res) => {
   const totalPriceBoxWidth = sparePartsColumnWidths.reduce((a, b) => a + b, 0);
 
   const heightOfAmountInWords = doc.heightOfString(totalAmountInWords, {
-    width: 350,
+    width: 300,
   });
 
-  let totalBoxHeight = heightOfAmountInWords + padding * 2;
+  let totalBoxHeight = heightOfAmountInWords + padding * 2 + 2;
   let totalPriceBoxY = tableEndY + 10;
 
   if (totalPriceBoxY + totalBoxHeight > doc.page.height - 40) {
