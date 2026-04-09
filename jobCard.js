@@ -458,37 +458,6 @@ const tableRows = [
   //     },
   //   ],
   // },
-  {
-    name: "Front Bumper Damage",
-    jobSheet: [
-      {
-        name: "Denting & Painting",
-        count: 1,
-        type: "Service",
-        price: 3500,
-        discount: 700,
-        discountPercent: 20,
-        tax: 240.81,
-        discountedPrice: 2800,
-        total: 2800,
-        taxRate: 18,
-      },
-      {
-        name: "Basic Service",
-        count: 1,
-        type: "Product",
-        productCode: "PRT89348200",
-        hsnCode: "HSN43677833",
-        price: 4500,
-        discount: 450,
-        discountPercent: 10,
-        tax: 250.81,
-        discountedPrice: 4050,
-        total: 4050,
-        taxRate: 18,
-      },
-    ],
-  },
   // {
   //   name: "Front Bumper Damage",
   //   jobSheet: [
@@ -520,6 +489,37 @@ const tableRows = [
   //     },
   //   ],
   // },
+  {
+    name: "Front Bumper Damage",
+    jobSheet: [
+      // {
+      //   name: "Denting & Painting",
+      //   count: 1,
+      //   type: "Service",
+      //   price: 3500,
+      //   discount: 700,
+      //   discountPercent: 20,
+      //   tax: 240.81,
+      //   discountedPrice: 2800,
+      //   total: 2800,
+      //   taxRate: 18,
+      // },
+      // {
+      //   name: "Basic Service",
+      //   count: 1,
+      //   type: "Product",
+      //   productCode: "PRT89348200",
+      //   hsnCode: "HSN43677833",
+      //   price: 4500,
+      //   discount: 450,
+      //   discountPercent: 10,
+      //   tax: 250.81,
+      //   discountedPrice: 4050,
+      //   total: 4050,
+      //   taxRate: 18,
+      // },
+    ],
+  },
   // {
   //   name: "Front Bumper Damage",
   //   jobSheet: [
@@ -555,48 +555,8 @@ const tableRows = [
 
 // physical concerns
 
-const garageVehicleImages = [
-  {
-    fileUrl:
-      "https://pikpart-testing.s3.ap-south-1.amazonaws.com/1000001880.jpg",
-  },
-  {
-    fileUrl:
-      "https://pikpart-testing.s3.ap-south-1.amazonaws.com/1000001869.jpg",
-  },
-  {
-    fileUrl:
-      "https://pikpart-testing.s3.ap-south-1.amazonaws.com/1000001849.jpg",
-  },
-  {
-    fileUrl:
-      "https://pikpart-testing.s3.ap-south-1.amazonaws.com/1000001880.jpg",
-  },
-  {
-    fileUrl:
-      "https://pikpart-testing.s3.ap-south-1.amazonaws.com/1000001869.jpg",
-  },
-  {
-    fileUrl:
-      "https://pikpart-testing.s3.ap-south-1.amazonaws.com/1000001849.jpg",
-  },
-  {
-    fileUrl:
-      "https://pikpart-testing.s3.ap-south-1.amazonaws.com/1000001880.jpg",
-  },
-  {
-    fileUrl:
-      "https://pikpart-testing.s3.ap-south-1.amazonaws.com/1000001869.jpg",
-  },
-  {
-    fileUrl:
-      "https://pikpart-testing.s3.ap-south-1.amazonaws.com/1000001849.jpg",
-  },
-];
-
 const allImages = [
   {
-    name: "Back",
     images: [
       {
         name: "Image 1",
@@ -609,7 +569,6 @@ const allImages = [
     ],
   },
   {
-    name: "Front",
     images: [
       {
         name: "Image 1",
@@ -625,11 +584,43 @@ const allImages = [
       },
     ],
   },
+  {
+    images: [
+      {
+        name: "Image 1",
+        url: "https://pikpart-testing.s3.ap-south-1.amazonaws.com/1000001882.jpg",
+      },
+      {
+        name: "Image 2",
+        url: "https://pikpart-testing.s3.ap-south-1.amazonaws.com/1000001882.jpg",
+      },
+      {
+        name: "Image 3",
+        url: "https://pikpart-testing.s3.ap-south-1.amazonaws.com/1000001882.jpg",
+      },
+    ],
+  },
+  // {
+  //   images: [
+  //     {
+  //       name: "Image 1",
+  //       url: "https://pikpart-testing.s3.ap-south-1.amazonaws.com/1000001882.jpg",
+  //     },
+  //     {
+  //       name: "Image 2",
+  //       url: "https://pikpart-testing.s3.ap-south-1.amazonaws.com/1000001882.jpg",
+  //     },
+  //     {
+  //       name: "Image 3",
+  //       url: "https://pikpart-testing.s3.ap-south-1.amazonaws.com/1000001882.jpg",
+  //     },
+  //   ],
+  // },
 ];
 
 // accessories
 
-const garageOthers = [
+const accessoriesOthers = [
   {
     name: "Mud Flap",
     qty: 4,
@@ -695,15 +686,15 @@ const HealthData = [
 ];
 
 const pickupRemarks = [
-  "Engine Making Noise",
-  "Tyre Puncture",
-  "Brake System Malfunction",
-  "Transmission Issue",
-  "Brake System Malfunction",
-  "Transmission Issue",
-  "Brake System Malfunction",
-  "Transmission Issue",
-  "Transmission Issue",
+  // "Engine Making Noise",
+  // "Tyre Puncture",
+  // "Brake System Malfunction",
+  // "Transmission Issue",
+  // "Brake System Malfunction",
+  // "Transmission Issue",
+  // "Brake System Malfunction",
+  // "Transmission Issue",
+  // "Transmission Issue",
 ];
 
 const termsAndConditions = [
@@ -738,7 +729,7 @@ async function renderAllImageSections(doc, allImages, startY) {
     const section = allImages[s];
 
     // ---- PAGE BREAK CHECK (before title) ----
-    if (imageY + imageHeight > doc.page.height - 70) {
+    if (imageY + imageHeight > doc.page.height - 40) {
       doc.addPage();
       imageY = 110;
       imageX = 20;
@@ -756,7 +747,7 @@ async function renderAllImageSections(doc, allImages, startY) {
       }
 
       // vertical overflow → new page
-      if (imageY + imageHeight > doc.page.height - 70) {
+      if (imageY + imageHeight > doc.page.height - 60) {
         doc.addPage();
         imageY = 110;
         imageX = 20;
@@ -789,8 +780,7 @@ async function renderAllImageSections(doc, allImages, startY) {
 
       imageX += imageWidth + gap;
     }
-
-    imageX += 25;
+    // imageX += 25;
   }
 
   return imageY + imageHeight;
@@ -901,29 +891,33 @@ const repeatingHeader = (doc) => {
     .stroke();
 
   /* ---------- RIGHT HEADER ---------- */
-  doc.image(
-    path.join(__dirname, "assets/SGInvoiceLogo.png"),
-    boxWidth - 96,
-    18,
-    { width: 23 },
-  );
+  // doc.image(
+  //   path.join(__dirname, "assets/SGInvoiceLogo.png"),
+  //   boxWidth - 96,
+  //   18,
+  //   { width: 23 },
+  // );
 
-  doc
-    .font(FONT_SEMIBOLD)
-    .fillColor("#E04B24")
-    .fontSize(15)
-    .text("smart garage", boxWidth - 67, y, { width: 130 });
+  // doc
+  //   .font(FONT_SEMIBOLD)
+  //   .fillColor("#E04B24")
+  //   .fontSize(15)
+  //   .text("smart garage", boxWidth - 67, y, { width: 130 });
+
+  doc.image(path.join(__dirname, "assets/SGLogo.png"), boxWidth - 93, 18, {
+    width: 125,
+  });
 
   doc
     .font(FONT_BOLD)
-    .fillColor("#060606")
-    .fontSize(20)
-    .text("Job Card", boxWidth - 59, y + 22);
+    .fillColor("#454D55")
+    .fontSize(16)
+    .text("Job Card", 27, y + 22, { width: boxWidth, align: "right" });
 
   doc
     .font(FONT_BOLD)
     .fontSize(9)
-    .text("SA00231-26IA214", boxWidth - 124, y + 50, {
+    .text("SA00231-26IA214", boxWidth - 124, y + 47, {
       width: 150,
       align: "right",
     });
@@ -1190,6 +1184,9 @@ const drawItemsTable = ({ doc, x, startY, headers, rows, columnWidths }) => {
   return y;
 };
 
+const signImage =
+  "https://pikpart-testing.s3.ap-south-1.amazonaws.com/1000001880.jpg";
+
 const jobCardPdf = async (res) => {
   const doc = new PDFDocument({ size: "A4", margin: 10, bufferPages: true });
 
@@ -1246,34 +1243,41 @@ const jobCardPdf = async (res) => {
     .fillColor("#333333")
     .text("Labor Total: ₹12900", boxWidth - 40, tableEndY + 10);
 
+  const totalAmountInWords =
+    "Amount in words : Five Lakh Forty Four Thousand Four Hundred Nine Rupees And Fifty Eight Paise Only Fifty Eight Paise Only";
+
   const padding = 6;
-  const rectHeight = 22;
+
+  doc.font(FONT_BOLD).fillColor("#333333").fontSize(8);
+
+  const heightOfAmountInWords = doc.heightOfString(totalAmountInWords, {
+    width: 300,
+  });
+
+  const totalBoxHeight = heightOfAmountInWords + padding * 2;
+
   let TotalBoxY = tableEndY + 30;
 
-  if (TotalBoxY + rectHeight > doc.page.height - 40) {
+  if (TotalBoxY + totalBoxHeight > doc.page.height - 40) {
     doc.addPage();
     TotalBoxY = 125;
   }
 
-  doc.rect(15, TotalBoxY, boxWidth + 10, rectHeight).fill("#F6F8FC");
-
-  doc.fillColor("#333333");
+  doc.rect(15, TotalBoxY, boxWidth + 10, totalBoxHeight).fill("#F6F8FC");
 
   doc
     .fontSize(8)
     .font(FONT_BOLD)
-    .text(
-      "Amount in words: ₹ One Lakh Twenty Three Thousand Eight Hundred Thirty Rupees Only",
-      20,
-      TotalBoxY + padding,
-      { width: boxWidth - 2 * padding },
-    );
+    .fillColor("#333333")
+    .text(totalAmountInWords, 20, TotalBoxY + padding, {
+      width: 300,
+    });
 
   doc
     .fontSize(8)
     .font(FONT_BOLD)
     .text(`Total: ₹ ${13790.0}`, 20, TotalBoxY + padding, {
-      width: boxWidth - 5,
+      width: boxWidth,
       align: "right",
     });
 
@@ -1281,23 +1285,29 @@ const jobCardPdf = async (res) => {
 
   const physicalConcernHeadingY = TotalBoxY + 30;
 
-  const headBoxHeight = 17;
+  const headBoxHeight = 19;
 
-  doc
-    .rect(15, physicalConcernHeadingY, boxWidth + 10, headBoxHeight)
-    .fill("#F6F8FC");
+  let imageHeading = physicalConcernHeadingY + 20;
+
+  if (imageHeading + headBoxHeight + 5 > doc.page.height - 40) {
+    doc.addPage();
+    imageHeading = 130;
+  }
+
+  doc.rect(15, imageHeading, boxWidth + 10, headBoxHeight).fill("#F6F8FC");
 
   doc
     .fillColor("#333333")
     .font(FONT_BOLD)
-    .text("Images -", 20, physicalConcernHeadingY + 4, {
+    .fontSize(8)
+    .text("Images -", 20, imageHeading + 4, {
       width: boxWidth - 2 * padding,
     });
 
   const imageSectionHeight = await renderAllImageSections(
     doc,
     allImages,
-    physicalConcernHeadingY + 10,
+    imageHeading + 10,
   );
 
   const gap = 15;
@@ -1429,6 +1439,11 @@ const jobCardPdf = async (res) => {
 
   let accessoriesStartY = secondBoxRowY + headBoxHeight * 3 + 5;
 
+  if (accessoriesStartY + headBoxHeight + 5 > doc.page.height - 60) {
+    doc.addPage();
+    accessoriesStartY = 130;
+  }
+
   doc
     .rect(leftX, accessoriesStartY, boxWidth + 10, headBoxHeight)
     .fill("#F6F8FC")
@@ -1437,6 +1452,7 @@ const jobCardPdf = async (res) => {
   doc
     .font(FONT_SEMIBOLD)
     .fillColor("#060606")
+    .fontSize(8)
     .text("Accessories", leftX + 5, accessoriesStartY + 4);
 
   let accessoriesColumn = boxWidth / 4;
@@ -1445,7 +1461,7 @@ const jobCardPdf = async (res) => {
 
   let rowMaxHeight = 0;
 
-  garageOthers.forEach((item, index) => {
+  accessoriesOthers.forEach((item, index) => {
     if (index % 4 === 0 && index !== 0) {
       accessoriesX = 20;
       accessoriesY += rowMaxHeight + 6;
@@ -1524,6 +1540,7 @@ const jobCardPdf = async (res) => {
   doc
     .fillColor("#060606")
     .font(FONT_SEMIBOLD)
+    .fontSize(8)
     .text("Vehicle Health Check-up", leftX + 5, HealthStartY + 4);
 
   HealthData?.forEach((item) => {
@@ -1653,7 +1670,7 @@ const jobCardPdf = async (res) => {
 
   if (termsY + totalTermsHeight > doc.page.height - 40) {
     doc.addPage();
-    termsY = 145;
+    termsY = 130;
   }
 
   doc.font(FONT_BOLD).text("TERMS & CONDITIONS", 20, termsY);
@@ -1686,6 +1703,21 @@ const jobCardPdf = async (res) => {
   doc
     .font(FONT_SEMIBOLD)
     .text("Customer Signature".toUpperCase(), 20, termsY + 40);
+
+  const imageBuffer = await new Promise((resolve, reject) => {
+    https
+      .get(signImage, (res) => {
+        const data = [];
+
+        res.on("data", (chunk) => data.push(chunk));
+        res.on("end", () => resolve(Buffer.concat(data)));
+      })
+      .on("error", reject);
+  });
+
+  doc.roundedRect(20, termsY + 60, 80, 80, 4).clip();
+
+  doc.image(imageBuffer, 20, termsY + 60, { width: 80, height: 80 });
 
   const range = doc.bufferedPageRange();
 

@@ -1,6 +1,7 @@
 import PDFDocument from "pdfkit";
 import path from "path";
 import { fileURLToPath } from "url";
+import https from "https";
 
 // Manually define `__dirname`
 const __filename = fileURLToPath(import.meta.url);
@@ -8,7 +9,7 @@ const __dirname = path.dirname(__filename);
 
 /* ---------- CONSTANTS ---------- */
 const LABEL_COLOR = "#333333";
-const VALUE_COLOR = "#888888";
+const VALUE_COLOR = "#666666";
 const BORDER_COLOR = "#C7CED5";
 
 const FONT_REGULAR = "Inter_24pt-Regular";
@@ -23,82 +24,78 @@ const valueText = (doc, text, x, y) => {
   doc.font(FONT_REGULAR).fillColor("#333333").fontSize(7).text(text, x, y);
 };
 
+/* --
+
 /* ---------- COLUMN DATA ---------- */
 
-const fromData = [
-  { label: "From", value: "RATNASHIL ONLINE SERVICES PRIVATE LIMITED" },
-  {
-    label: "Address",
-    value: "Plot no.967 Bypass Road, Sector-9, Faridabad Haryana - 121006",
-  },
-  { label: "Contact", value: "9027914004" },
-  { label: "State Name", value: "Haryana" },
-  { label: "State Code", value: "06" },
-  { label: "GSTIN", value: "06AAICR7704D1ZI" },
-  { label: "PAN No", value: "AAICR7704D" },
-  { label: "Email ID", value: "account@pikpart.com" },
+const repeatBilledData = [
+  { label: "Name", value: "Ratnashil" },
+  { label: "Address", value: "Dinesh Saini" },
+  { label: "Contact", value: "1234567890" },
 ];
 
-const buyerData = [
-  { label: "Buyer", value: "9027914004" },
-  {
-    label: "Address",
-    value: "Raghunathganj-II, Murshidabad, West Bengal - 742213",
-  },
-  { label: "Contact", value: "8250794411" },
-  { label: "State Name", value: "West Bengal" },
-  { label: "State Code", value: "19" },
-  {
-    label: "GSTIN Status",
-    value: "Registered / Unregistered",
-    //   labelWidth: 80,
-  },
-  { label: "GSTIN/ARN", value: "NA" },
-  { label: "PAN No", value: "AAICR7704D" },
+const billedTo = [
+  { label: "Name", value: "Ratnashil" },
+  { label: "Address", value: "Dinesh Saini" },
+  { label: "Contact", value: "1234567890" },
+  { label: "Email", value: "dineshsaini@gmail.com" },
+  { label: "GSTIN/UIN", value: "ABC" },
+  { label: "Business Name", value: "ABC" },
+  { label: "GST Address", value: "ABC" },
 ];
 
-const consigneeData = [
-  { label: "Consignee", value: "Chainstart Autopart" },
-  {
-    label: "Address",
-    value: "Raghunathganj-II, Murshidabad, West Bengal - 742213",
-  },
-  { label: "Contact", value: "8250794411" },
-  { label: "State Name", value: "West Bengal" },
-  { label: "State Code", value: "19" },
-  {
-    label: "GSTIN Status",
-    value: "Registered / Unregistered",
-    //   labelWidth: 80,
-  },
-  { label: "GSTIN/ARN", value: "NA" },
-  { label: "Business Name", value: "-" },
+const repeatVehicleData = [
+  { label: "Vehicle No.", value: "MP23A98193" },
+  { label: "Brand/Model", value: "Maruti Suzuki/Dzire" },
+  { label: "Odometer", value: "398394 kms" },
+];
+
+const vehicleData = [
+  { label: "Vehicle Type", value: "4W" },
+  { label: "Vehicle No.", value: "MP23A98193" },
+  { label: "Chassis No.", value: "1234567890" },
+  { label: "Engine No.", value: "4857234928493" },
+  { label: "Brand/Model", value: "Maruti Suzuki/Dzire" },
+  { label: "Fuel Type", value: "Petrol" },
+  { label: "Odometer", value: "398394 kms" },
+];
+
+const repeatServiceData = [
+  { label: "Generated On", value: "28th Jul 2025" },
+  { label: "Invoice No.", value: "SA656544656" },
+  { label: "Supervisor", value: "Pawan Bhamniya" },
+];
+
+const serviceData = [
+  { label: "Generated On", value: "28th Jul 2025" },
+  { label: "Invoice No.", value: "SA656544656" },
+  { label: "Supervisor", value: "Pawan Bhamniya" },
+  { label: "Booking ID", value: "BKG8697676" },
+];
+
+const billerInfo = [
+  { label: "Name", value: "Garage" },
+  { label: "Address", value: "Dinesh Saini" },
+  { label: "State", value: "ABC" },
+  { label: "Status code", value: "ABC" },
+  { label: "Contact", value: "1234567890" },
+  { label: "Email", value: "dineshsaini@gmail.com" },
+  { label: "GSTIN", value: "ABC" },
+];
+
+const serviceInfo = [
+  { label: "Garage Name", value: "Garage", labelWidth: 75 },
+  { label: "Garage Address", value: "Dinesh Saini", labelWidth: 75 },
+  { label: "Garage State", value: "Dinesh Saini", labelWidth: 75 },
+  { label: "Garage State Code", value: "Dinesh Saini", labelWidth: 75 },
+  { label: "Garage Contact", value: "1234567890", labelWidth: 75 },
+  { label: "Garage Email", value: "dineshsaini@gmail.com", labelWidth: 75 },
+  { label: "Garage GSTIN/UIN", value: "ABC", labelWidth: 75 },
 ];
 
 /* ---------- HELPER FUNCTIONS ---------- */
 
-// Draw single label-value row
-const drawRow = ({
-  doc,
-  label,
-  value,
-  x,
-  labelWidth = 54,
-  valueWidth = 120,
-}) => {
-  doc.fillColor(LABEL_COLOR).font(FONT_SEMIBOLD).text(label, x);
-
-  doc
-    .fillColor(VALUE_COLOR)
-    .font(FONT_REGULAR)
-    .text(value, x + labelWidth, doc.y - doc.currentLineHeight(), {
-      width: valueWidth,
-    });
-
-  doc.moveDown(0.4);
-};
-
-const repeatingHeader = (doc, contactInfo, invoiceType) => {
+const repeatingHeader = (doc, contactInfo) => {
   const x = 20;
   const y = 20;
   const boxWidth = 550;
@@ -167,81 +164,109 @@ const repeatingHeader = (doc, contactInfo, invoiceType) => {
 
   doc
     .font(FONT_REGULAR)
-    .fillColor("#888888")
+    .fillColor("#666666")
     .fontSize(7)
     .text("(A Unit Of Ratnashil Online Services Pvt. Ltd.)", x, y + 78);
 
   /* ---------- DIVIDER ---------- */
   doc
-    .moveTo(0, 115)
-    .lineTo(140, 115)
+    .moveTo(0, 113)
+    .lineTo(140, 113)
     .strokeColor("#CA2A01")
     .lineWidth(1)
     .stroke();
 
   /* ---------- RIGHT HEADER ---------- */
-  doc.image(
-    path.join(__dirname, "assets/SGInvoiceLogo.png"),
-    boxWidth - 96,
-    18,
-    { width: 23 },
-  );
+  doc.image(path.join(__dirname, "assets/SGLogo.png"), boxWidth - 70, 18, {
+    width: 100,
+  });
 
-  doc
-    .font(FONT_SEMIBOLD)
-    .fillColor("#E04B24")
-    .fontSize(15)
-    .text("smart garage", 27, y, {
-      width: boxWidth,
-      align: "right",
-    });
+  // doc
+  //   .font(FONT_SEMIBOLD)
+  //   .fillColor("#E04B24")
+  //   .fontSize(15)
+  //   .text("smart garage", 27, y, {
+  //     width: boxWidth,
+  //     align: "right",
+  //   });
 
   doc
     .font(FONT_BOLD)
     .fillColor("#060606")
-    .fontSize(20)
-    .text(invoiceType, 27, y + 22, { width: boxWidth, align: "right" });
-
-  if (invoiceType != "Proforma Invoice") {
-    doc
-      .font(FONT_BOLD)
-      .fontSize(9)
-      .text("SA00231-26IA214", 27, y + 50, {
-        width: boxWidth,
-        align: "right",
-      });
-  }
-
-  /* ---------- ADDRESS ---------- */
-  doc.image(
-    path.join(__dirname, "assets/InvoiceLocationIcon.png"),
-    boxWidth + 17,
-    invoiceType != "Proforma Invoice" ? y + 65 : y + 54,
-    { width: 10 },
-  );
+    .fontSize(18)
+    .text("Tax Invoice", 27, y + 20, { width: boxWidth, align: "right" });
 
   doc
+    .font(FONT_BOLD)
+    .fontSize(9)
+    .text("SA00231-26IA214", 27, y + 43, {
+      width: boxWidth,
+      align: "right",
+    });
+
+  const date = "28th Jul 2025";
+
+  doc
+    .font(FONT_SEMIBOLD)
+    .fillColor("#555555")
+    .fontSize(8)
+    .text(date, 0, y + 56, {
+      width: boxWidth + 26,
+      align: "right",
+    });
+};
+
+const drawRow = ({
+  doc,
+  label,
+  value,
+  x,
+  labelWidth = 54,
+  valueWidth = 120,
+}) => {
+  doc.fillColor(LABEL_COLOR).font(FONT_SEMIBOLD).text(label, x);
+
+  doc
+    .fillColor(VALUE_COLOR)
     .font(FONT_REGULAR)
-    .fillColor("#333333")
-    .fontSize(7)
-    .text(
-      "Mandsaur Chandrapura Survey No. 676 Mandsaur Madhya Pradesh 458001",
-      boxWidth - 185,
-      invoiceType != "Proforma Invoice" ? y + 65 : y + 54,
-      { width: 200, align: "right" },
-    );
+    .text(value, x + labelWidth, doc.y - doc.currentLineHeight(), {
+      width: valueWidth,
+    });
+
+  doc.moveDown(0.5);
 };
 
 // Draw a complete column from config
-const drawColumn = ({ doc, x, y, rows, labelWidth }) => {
+const drawColumn = ({ doc, x, y, rows, name, labelWidth, columnWidth, bg }) => {
   doc.y = y;
-  rows.forEach((row) => drawRow({ doc, x, labelWidth, ...row }));
+  doc
+    .fillColor("#060606")
+    .font(FONT_BOLD)
+    .fontSize(8)
+    .text(name, x + 5);
+
+  const heightOfHeader = doc.heightOfString(name) + 4;
+
+  doc.fontSize(7);
+  doc.moveDown(0.8);
+
+  if (bg == true) {
+    const heightOfRows = rows.reduce((total, row) => {
+      const rowHeight =
+        doc.heightOfString(row.label) + doc.heightOfString(row.value) - 1;
+      return total + rowHeight;
+    }, 0);
+
+    doc
+      .rect(x, y + heightOfHeader, columnWidth - 15, heightOfRows - 18)
+      .fill("#F6F8FC");
+  }
+
+  rows.forEach((row) => drawRow({ doc, x: x + 5, labelWidth, ...row }));
   return doc.y;
 };
 
-const drawHeaderColumns = (doc, fromData, buyerData, consigneeData) => {
-  const x = 20;
-  const y = 120;
+const drawHeaderColumns = (doc, x, y, billerData, sellerData, buyerData) => {
   const boxWidth = 550;
   const columnWidth = boxWidth / 3;
 
@@ -251,21 +276,30 @@ const drawHeaderColumns = (doc, fromData, buyerData, consigneeData) => {
     doc,
     x,
     y,
-    rows: fromData,
+    rows: billerData,
+    name: "BILLED TO",
+    columnWidth,
+    bg: false,
   });
 
   const section1Col2 = drawColumn({
     doc,
     x: x + columnWidth + 5,
     y,
-    rows: buyerData,
+    rows: sellerData,
+    name: "VEHICLE DETAIL",
+    columnWidth,
+    bg: false,
   });
 
   const section1Col3 = drawColumn({
     doc,
     x: x + columnWidth * 2 + 5,
     y,
-    rows: consigneeData,
+    rows: buyerData,
+    name: "SERVICE DETAIL",
+    columnWidth,
+    bg: false,
   });
 
   const height = Math.max(section1Col1, section1Col2, section1Col3); // 🔹 header section height
@@ -282,145 +316,172 @@ const drawHeaderColumns = (doc, fromData, buyerData, consigneeData) => {
   return height;
 };
 
+const drawHeaderColumns1 = (
+  doc,
+  x,
+  y,
+  columnWidth1,
+  billerInfo,
+  serviceInfo,
+) => {
+  const section1Col1 = drawColumn({
+    doc,
+    x,
+    y,
+    rows: billerInfo,
+    name: "BILLER INFO",
+    columnWidth: columnWidth1,
+    bg: true,
+  });
+
+  const section1Col2 = drawColumn({
+    doc,
+    x: x + columnWidth1 + 5,
+    y,
+    rows: serviceInfo,
+    name: "SERVICE PROVIDER",
+    columnWidth: columnWidth1,
+    bg: true,
+  });
+
+  const height = Math.max(section1Col1, section1Col2); // 🔹 header section height
+
+  return height;
+};
+
 // products table data
 
 const sparePartsHeaders = [
   "SN.",
-  "Name",
-  "Code",
-  "HSN",
+  "Name/Code",
+  "HSN/SAC",
   "MRP",
   "GST%",
   "Unit Price\n(Before Disc.)",
   "Discount %",
   "Unit Price\n(After Disc.)",
   "Qty.",
-  "Approved %",
   "Taxable\nValue",
   "Net Total",
 ];
 
 const sparePartsColumnWidths = [
   20, // SN
-  70, // Name (reduced from 85)
-  40, // Code
-  40, // HSN
-  30, // MRP
+  144, // Spare Parts // Code
+  49, // HSN
+  38, // MRP
   30, // GST
   60, // Unit Price Before
-  42, // Discount
+  37, // Discount
   60, // Unit Price After
-  26, // Qty
-  42, // Approved %
-  40, // Taxable Value
-  50, // Net Total
+  22, // Qty
+  45, // Taxable Value
+  45, // Net Total
 ];
 
 const sparePartsRows = [
-    {
-      sn: 1,
-      part: "Air Filter",
-      code: "34802353480235",
-      hsn: "3480235",
-      mrp: "5678",
-      gst: "18",
-      before: "230.00",
-      disc: "0",
-      after: "210.00",
-      qty: "2",
-      approved: "55",
-      taxable: "360.00",
-      total: "330.00",
-    },
-    {
-      sn: 2,
-      part: "Front Bumper",
-      code: "5434543543543",
-      hsn: "3488935",
-      mrp: "4823",
-      gst: "18",
-      before: "125.00",
-      disc: "0",
-      after: "160.00",
-      qty: "2",
-      approved: "70",
-      taxable: "250.00",
-      total: "210.00",
-    },
-//   {
-//     sn: 3,
-//     part: "Engine Oil",
-//     code: "54543543643643",
-//     hsn: "3484567",
-//     mrp: "3784",
-//     gst: "20",
-//     before: "150.00",
-//     disc: "0",
-//     after: "180.00",
-//     qty: "2",
-//     taxable: "300.00",
-//     total: "280.00",
-//   },
-//   {
-//     sn: 4,
-//     part: "Brake Pad",
-//     code: "5656456454453",
-//     hsn: "3481111",
-//     mrp: "2890",
-//     gst: "18",
-//     before: "320.00",
-//     disc: "10",
-//     after: "288.00",
-//     qty: "1",
-//     taxable: "288.00",
-//     total: "340.00",
-//   },
-//   {
-//     sn: 5,
-//     part: "Clutch Plate",
-//     code: "456456456456",
-//     hsn: "3482222",
-//     mrp: "6500",
-//     gst: "18",
-//     before: "950.00",
-//     disc: "5",
-//     after: "902.50",
-//     qty: "1",
-//     taxable: "902.50",
-//     total: "1065.00",
-//   },
-//   {
-//     sn: 6,
-//     part: "Spark Plug",
-//     code: "45645654654654",
-//     hsn: "3483333",
-//     mrp: "890",
-//     gst: "18",
-//     before: "120.00",
-//     disc: "0",
-//     after: "120.00",
-//     qty: "3",
-//     taxable: "360.00",
-//     total: "425.00",
-//   },
-//   {
-//     sn: 7,
-//     part: "Chain Sprocket",
-//     code: "456456456546",
-//     hsn: "3484444",
-//     mrp: "7200",
-//     gst: "18",
-//     before: "1150.00",
-//     disc: "5",
-//     after: "1092.50",
-//     qty: "1",
-//     taxable: "1092.50",
-//     total: "1288.00",
-//   },
+  {
+    sn: 1,
+    part: "Relay Assembly_blower Motor",
+    code: "71711M74L00-5PK",
+    hsn: "3480235",
+    mrp: "5678",
+    gst: "18",
+    before: "230.00",
+    disc: "0",
+    after: "210.00",
+    qty: "2",
+    taxable: "360.00",
+    total: "330.00",
+  },
+  {
+    sn: 2,
+    part: "Relay Assembly blower Motor Relay Assembly blower Motor Relay Assembly blower Motor",
+    code: "ZA-4011",
+    hsn: "3488935",
+    mrp: "4823",
+    gst: "18",
+    before: "125.00",
+    disc: "0",
+    after: "160.00",
+    qty: "2",
+    taxable: "250.00",
+    total: "210.00",
+  },
+  {
+    sn: 3,
+    part: "Engine Oil",
+    code: "MOU001",
+    hsn: "3484567",
+    mrp: "3784",
+    gst: "20",
+    before: "150.00",
+    disc: "0",
+    after: "180.00",
+    qty: "2",
+    taxable: "300.00",
+    total: "280.00",
+  },
+  {
+    sn: 4,
+    part: "Brake Pad",
+    code: "45810M69R00",
+    hsn: "3481111",
+    mrp: "2890",
+    gst: "18",
+    before: "320.00",
+    disc: "10",
+    after: "288.00",
+    qty: "1",
+    taxable: "288.00",
+    total: "340.00",
+  },
+  {
+    sn: 5,
+    part: "Clutch Plate",
+    code: "18213M68PB1",
+    hsn: "3482222",
+    mrp: "6500",
+    gst: "18",
+    before: "950.00",
+    disc: "5",
+    after: "902.50",
+    qty: "1",
+    taxable: "902.50",
+    total: "1065.00",
+  },
+  {
+    sn: 6,
+    part: "Spark Plug",
+    code: "35321M69R00",
+    hsn: "3483333",
+    mrp: "890",
+    gst: "18",
+    before: "120.00",
+    disc: "0",
+    after: "120.00",
+    qty: "3",
+    taxable: "360.00",
+    total: "425.00",
+  },
+  // {
+  //   sn: 7,
+  //   part: "Chain Sprocket",
+  //   code: "68004M69R01",
+  //   hsn: "3484444",
+  //   mrp: "7200",
+  //   gst: "18",
+  //   before: "1150.00",
+  //   disc: "5",
+  //   after: "1092.50",
+  //   qty: "1",
+  //   taxable: "1092.50",
+  //   total: "1288.00",
+  // },
   // {
   //   sn: 8,
   //   part: "Side Mirror",
-  //   code: "456456456456456",
+  //   code: "53200M69R00",
   //   hsn: "3485555",
   //   mrp: "1500",
   //   gst: "18",
@@ -434,7 +495,7 @@ const sparePartsRows = [
   // {
   //   sn: 9,
   //   part: "Indicator Set",
-  //   code: "4456456546456",
+  //   code: "22400M66R00",
   //   hsn: "3486666",
   //   mrp: "2200",
   //   gst: "18",
@@ -448,7 +509,7 @@ const sparePartsRows = [
   // {
   //   sn: 10,
   //   part: "Battery",
-  //   code: "344564564568777",
+  //   code: "13400M68P10",
   //   hsn: "3487777",
   //   mrp: "9500",
   //   gst: "18",
@@ -462,7 +523,7 @@ const sparePartsRows = [
   // {
   //   sn: 10,
   //   part: "Battery",
-  //   code: "344564564568777",
+  //   code: "57711M69R00",
   //   hsn: "3487777",
   //   mrp: "9500",
   //   gst: "18",
@@ -474,7 +535,7 @@ const sparePartsRows = [
   //   total: "2466.00",
   // },
   // ---- Repeating pattern for pagination testing ----
-  ...Array.from({ length: 1 }, (_, i) => ({
+  ...Array.from({ length: 2 }, (_, i) => ({
     sn: i + 11,
     part: "General Spare Part",
     code: `34900${i + 11}`,
@@ -486,7 +547,6 @@ const sparePartsRows = [
     disc: "0",
     after: "400.00",
     qty: "2",
-    approved: "67",
     taxable: "800.00",
     total: "944.00",
   })),
@@ -496,99 +556,95 @@ const sparePartsRows = [
 const servicesHeaders = [
   "SN.",
   "Service Description",
-  "HSN/SACw",
+  "SAC",
   "MRP",
   "GST%",
   "Unit Price\n(Before Disc.)",
-  "Discount %",
+  "Discount\n%",
   "Unit Price\n(After Disc.)",
   "Qty.",
-  "Approved %",
   "Taxable\nValue",
   "Net Total",
 ];
 
 const servicesColumnWidths = [
   20, // SN
-  100, // Spare Parts (85 → 95)       +10
-  50,
-  30, // MRP
+  144, // Spare Parts (+25)
+  49, // HSN
+  38, // MRP
   30, // GST
   60, // Unit Price Before
-  42, // Discount
+  37, // Discount
   60, // Unit Price After
-  26, // Qty
-  42, // Approved %
-  40, // Taxable Value
-  50, // Net Total
+  22, // Qty
+  45, // Taxable Value
+  45, // Net Total
 ];
 
 const servicesPartsRows = [
-  //   {
-  //     sn: 1,
-  //     part: "Air Filter",
-  //     mrp: "5678",
-  //     gst: "18",
-  //     before: "230.00",
-  //     disc: "0",
-  //     after: "210.00",
-  //     qty: "2",
-  //     approved: "67",
-  //     taxable: "360.00",
-  //     total: "330.00",
-  //   },
-  //   {
-  //     sn: 2,
-  //     part: "Front Bumper",
-  //     mrp: "4823",
-  //     gst: "18",
-  //     before: "125.00",
-  //     disc: "0",
-  //     after: "160.00",
-  //     qty: "2",
-  //     approved: "67",
-  //     taxable: "250.00",
-  //     total: "210.00",
-  //   },
-  //   {
-  //     sn: 3,
-  //     part: "Engine Oil",
-  //     mrp: "3784",
-  //     gst: "20",
-  //     before: "150.00",
-  //     disc: "0",
-  //     after: "180.00",
-  //     qty: "2",
-  //     approved: "67",
-  //     taxable: "300.00",
-  //     total: "280.00",
-  //   },
-  //   {
-  //     sn: 4,
-  //     part: "Brake Pad",
-  //     mrp: "2890",
-  //     gst: "18",
-  //     before: "320.00",
-  //     disc: "10",
-  //     after: "288.00",
-  //     qty: "1",
-  //     approved: "67",
-  //     taxable: "288.00",
-  //     total: "340.00",
-  //   },
-  //   {
-  //     sn: 5,
-  //     part: "Clutch Plate",
-  //     mrp: "6500",
-  //     gst: "18",
-  //     before: "950.00",
-  //     disc: "5",
-  //     after: "902.50",
-  //     qty: "1",
-  //     approved: "67",
-  //     taxable: "902.50",
-  //     total: "1065.00",
-  //   },
+  {
+    sn: 1,
+    part: "Air Filter",
+    sac : "435345435",
+    mrp: "5678",
+    gst: "18",
+    before: "230.00",
+    disc: "0",
+    after: "210.00",
+    qty: "2",
+    taxable: "360.00",
+    total: "330.00",
+  },
+  {
+    sn: 2,
+    part: "Front Bumper",
+    sac : "435345435",
+    mrp: "4823",
+    gst: "18",
+    before: "125.00",
+    disc: "0",
+    after: "160.00",
+    qty: "2",
+    taxable: "250.00",
+    total: "210.00",
+  },
+  {
+    sn: 3,
+    part: "Engine Oil",
+    mrp: "3784",
+    gst: "20",
+    before: "150.00",
+    disc: "0",
+    after: "180.00",
+    qty: "2",
+    approved: "67",
+    taxable: "300.00",
+    total: "280.00",
+  },
+  {
+    sn: 4,
+    part: "Brake Pad",
+    mrp: "2890",
+    gst: "18",
+    before: "320.00",
+    disc: "10",
+    after: "288.00",
+    qty: "1",
+    taxable: "288.00",
+    total: "340.00",
+  },
+  {
+    sn: 5,
+    part: "Clutch Plate",
+    mrp: "6500",
+    gst: "18",
+    before: "950.00",
+    disc: "5",
+    after: "902.50",
+    qty: "1",
+    taxable: "902.50",
+    total: "1065.00",
+  },
   // ---- Repeating pattern for pagination testing ----
   ...Array.from({ length: 1 }, (_, i) => ({
     sn: i + 11,
@@ -599,7 +655,6 @@ const servicesPartsRows = [
     disc: "0",
     after: "400.00",
     qty: "2",
-    approved: "67",
     taxable: "800.00",
     total: "944.00",
   })),
@@ -651,9 +706,27 @@ const drawTableRow = ({ doc, x, y, row, columnWidths, isHeader = false }) => {
 
   // Calculate row height
   row.forEach((cell, i) => {
-    const height = doc.heightOfString(cell, {
-      width: columnWidths[i] - 6,
-    });
+    let height = 0;
+    const cellWidth = columnWidths[i] - 6;
+
+    if (i === 1 && typeof cell === "object") {
+      // height of name
+      const nameHeight = doc.heightOfString(cell.name, {
+        width: cellWidth,
+      });
+
+      // height of code
+      const codeHeight = doc.heightOfString(cell.code, {
+        width: cellWidth,
+      });
+
+      height = nameHeight + codeHeight;
+    } else {
+      height = doc.heightOfString(String(cell), {
+        width: cellWidth,
+      });
+    }
+
     maxHeight = Math.max(maxHeight, height + 10);
   });
 
@@ -672,14 +745,45 @@ const drawTableRow = ({ doc, x, y, row, columnWidths, isHeader = false }) => {
   // Draw text (NO vertical borders)
   let currentX = x;
   row.forEach((cell, i) => {
-    doc
-      .font(isHeader ? FONT_SEMIBOLD : FONT_REGULAR)
-      .fillColor("#333333")
-      .fontSize(7)
-      .text(cell, currentX + 3, y + 5, {
-        width: columnWidths[i] - 6,
-        align: i === 1 ? "left" : "center",
+    const cellX = currentX + 3;
+    const cellY = y + 5;
+    const cellWidth = columnWidths[i] - 6;
+
+    if (i === 1 && typeof cell === "object") {
+      // Draw Name (normal color)
+      doc
+        .font(FONT_REGULAR)
+        .fillColor("#333333")
+        .fontSize(7)
+        .text(cell.name, cellX, cellY, {
+          width: cellWidth,
+          align: "left",
+        });
+
+      // Get height of name
+      const nameHeight = doc.heightOfString(cell.name, {
+        width: cellWidth,
       });
+
+      // Draw Code (different color)
+      doc
+        .font(FONT_SEMIBOLD)
+        .fillColor("#111") // 👈 change color here
+        .fontSize(7)
+        .text(cell.code, cellX, cellY + nameHeight, {
+          width: cellWidth,
+          align: "left",
+        });
+    } else {
+      doc
+        .font(isHeader ? FONT_SEMIBOLD : FONT_REGULAR)
+        .fillColor("#333333")
+        .fontSize(7)
+        .text(cell, cellX, cellY, {
+          width: cellWidth,
+          align: i === 1 ? "left" : "center",
+        });
+    }
 
     currentX += columnWidths[i];
   });
@@ -707,7 +811,6 @@ const drawSparePartsTable = ({
 }) => {
   const topMargin = 10;
   const bottomMargin = 40;
-
   let y = startY;
 
   //  Draw header initially
@@ -723,8 +826,7 @@ const drawSparePartsTable = ({
   rows.forEach((item) => {
     const rowData = [
       String(item.sn),
-      item.part,
-      item.code,
+      { name: item.part, code: item.code },
       item.hsn,
       item.mrp,
       item.gst,
@@ -732,7 +834,6 @@ const drawSparePartsTable = ({
       item.disc,
       item.after,
       item.qty,
-      item.approved,
       item.taxable,
       item.total,
     ];
@@ -743,7 +844,7 @@ const drawSparePartsTable = ({
     if (y + estimatedHeight > doc.page.height - bottomMargin) {
       doc.addPage();
 
-      y = topMargin + headerHeight;
+      y = topMargin + headerHeight - 50;
 
       //  redraw header on new page
       y += drawTableRow({
@@ -798,14 +899,13 @@ const drawServiceTable = ({
     const rowData = [
       String(item.sn),
       item.part,
-      item.hsn,
+      item.sac,
       item.mrp,
       item.gst,
       item.before,
       item.disc,
       item.after,
       item.qty,
-      item.approved,
       item.taxable,
       item.total,
     ];
@@ -816,7 +916,7 @@ const drawServiceTable = ({
     if (y + estimatedHeight > doc.page.height - bottomMargin) {
       doc.addPage();
 
-      y = topMargin + headerHeight;
+      y = topMargin + headerHeight - 165;
 
       //  redraw header on new page
       y += drawTableRow({
@@ -842,12 +942,13 @@ const drawServiceTable = ({
   return y;
 };
 
+const signImage =
+  "https://pikpart-testing.s3.ap-south-1.amazonaws.com/1000001880.jpg";
+
 /* ---------- MAIN PDF FUNCTION ---------- */
 
-const claimInvoice = (res) => {
+const purchaseInvoice = async (res) => {
   const doc = new PDFDocument({ size: "A4", margin: 10, bufferPages: true });
-
-  const invoiceType = "Tax Invoice";
 
   const contactInfo = {
     contact: "1234567890",
@@ -876,101 +977,61 @@ const claimInvoice = (res) => {
 
   doc.pipe(res);
 
-  doc.on("pageAdded", () => {
-    repeatingHeader(doc, contactInfo, invoiceType);
-    drawHeaderColumns(doc, fromData, buyerData, consigneeData);
-  });
-
   /* ---------- HEADER IMAGES ---------- */
   const pageWidth = doc.page.width;
 
   /* ---------- LAYOUT ---------- */
   const x = 20;
+  const y = 120;
   const boxWidth = 550;
+  const columnWidth1 = boxWidth / 2;
   const columnWidth = boxWidth / 3;
 
   doc.fontSize(7);
 
   /* ---------- DRAW COLUMNS ---------- */
 
-  repeatingHeader(doc, contactInfo, invoiceType);
+  repeatingHeader(doc, contactInfo);
+
+  const headerHeight1 = drawHeaderColumns1(
+    doc,
+    x,
+    y,
+    columnWidth1,
+    billerInfo,
+    serviceInfo,
+  );
+
+  doc.on("pageAdded", () => {
+    repeatingHeader(doc, contactInfo);
+    drawHeaderColumns(
+      doc,
+      x,
+      y,
+      repeatBilledData,
+      repeatVehicleData,
+      repeatServiceData,
+    );
+  });
 
   const headerHeight = drawHeaderColumns(
     doc,
-    fromData,
-    buyerData,
-    consigneeData,
-  );
-
-  const bottomY1 = headerHeight;
-
-  /* ------------- After Border ---------------- */
-
-  const secondSectionY = bottomY1 + 8; // spacing after first section
-
-  const Section1Array1 = [
-    { label: "Vehicle Type  ", value: "4W" },
-    {
-      label: "Vehicle No.  ",
-      value: "UP23AU1001",
-    },
-    { label: "Chassis No.  ", value: "1234567890" },
-    { label: "Engine No.  ", value: "4857234928493" },
-    { label: "Brand/Model  ", value: "Maruti Suzuki/Dzire" },
-    { label: "Fuel Type  ", value: "Petrol" },
-    { label: "Odometer  ", value: "398394 kms" },
-  ];
-
-  const section2Col1 = drawColumn({
-    doc,
     x,
-    y: secondSectionY,
-    labelWidth: 54,
-    rows: Section1Array1,
-  });
-
-  const section2Array2 = [
-    { label: "Generated On", value: "28th Jul 2025" },
-    {
-      label: "Supervisor.",
-      value: "Choudhary Saab",
-    },
-  ];
-
-  const section2Col2 = drawColumn({
-    doc,
-    x: x + columnWidth + 5,
-    y: secondSectionY,
-    labelWidth: 54,
-    rows: section2Array2,
-  });
-
-  doc.image(
-    path.join(__dirname, "assets/invoiceQRCode.png"),
-    pageWidth - 110,
-    bottomY1 + 10,
-    { width: 80 },
+    headerHeight1 + 10,
+    billedTo,
+    vehicleData,
+    serviceData,
   );
 
-  const bottomY2 = Math.max(section2Col1, section2Col2);
-
-  doc
-    .strokeColor(BORDER_COLOR)
-    .lineWidth(0.6)
-    .moveTo(x, bottomY2 + 8)
-    .lineTo(x + boxWidth, bottomY2 + 8)
-    .stroke();
-
-  // Table code starts
-
-  const tableStartY = sparePartsRows?.length > 0 ? bottomY2 + 30 : bottomY2;
+  const tableStartY =
+    sparePartsRows?.length > 0 ? headerHeight + 10 : headerHeight;
 
   if (sparePartsRows?.length > 0) {
     doc
       .fillColor(LABEL_COLOR)
       .font(FONT_BOLD)
       .fontSize(8)
-      .text("Spare Parts", x, bottomY2 + 23 - doc.currentLineHeight());
+      .text("SPARE PARTS", x + 5, tableStartY);
   }
 
   const tableEndY =
@@ -978,7 +1039,7 @@ const claimInvoice = (res) => {
       ? drawSparePartsTable({
           doc,
           x,
-          startY: tableStartY,
+          startY: tableStartY + 17,
           headers: sparePartsHeaders,
           rows: sparePartsRows,
           columnWidths: sparePartsColumnWidths,
@@ -1005,7 +1066,11 @@ const claimInvoice = (res) => {
       .fillColor(LABEL_COLOR)
       .font(FONT_BOLD)
       .fontSize(8)
-      .text("Service & Package", x, tableEndY + 30 - doc.currentLineHeight());
+      .text(
+        "SERVICE & PACKAGES",
+        x + 5,
+        tableEndY + 30 - doc.currentLineHeight(),
+      );
   }
 
   const servicesTableEndY =
@@ -1037,26 +1102,24 @@ const claimInvoice = (res) => {
       );
   }
 
-  //   Price total box
-
-  const totalPriceText =
-    "Amount in words : One Lakh Twenty Three Thousand Eight Hundred Thirty Rupees Only";
+  const totalAmountInWords =
+    "Amount in words : Five Lakh Forty Four Thousand Four Hundred Nine Rupees And Fifty Eight Paise Only Fifty Eight Paise Only";
 
   const padding = 6;
 
   const totalPriceBoxWidth = sparePartsColumnWidths.reduce((a, b) => a + b, 0);
 
-  const textHeight = doc.heightOfString(totalPriceText, {
-    width: totalPriceBoxWidth - padding * 2,
+  const heightOfAmountInWords = doc.heightOfString(totalAmountInWords, {
+    width: 300,
   });
 
-  const totalBoxHeight = textHeight + padding * 2;
+  const totalBoxHeight = heightOfAmountInWords + padding * 2;
 
   let totalPriceBoxY = servicesTableEndY + 25;
 
-  if (servicesTableEndY + 40 + totalBoxHeight > doc.page.height - 40) {
+  if (totalPriceBoxY + totalBoxHeight > doc.page.height - 40) {
     doc.addPage();
-    totalPriceBoxY = headerHeight + 10; // reset Y for new page
+    totalPriceBoxY = headerHeight - 50; // reset Y for new page
   }
 
   doc.font(FONT_BOLD).fontSize(8);
@@ -1065,26 +1128,14 @@ const claimInvoice = (res) => {
 
   doc
     .fillColor("#333333")
-    .text(totalPriceText, x + padding, totalPriceBoxY + padding, {
-      width: totalPriceBoxWidth - padding * 2,
+    .text(totalAmountInWords, x + padding, totalPriceBoxY + padding, {
+      width: 350,
     });
 
-  // doc
-  //   .fillColor("#333333")
-  //   .text("Total: ₹ 12790.00", x, totalPriceBoxY + padding, {
-  //     width: totalPriceBoxWidth,
-  //     align: "right",
-  //   });
-
-  // doc.fillColor("#333333").text("₹ 13790.00", x, totalPriceBoxY + padding, {
-  //   width: totalPriceBoxWidth - 5,
-  //   align: "right",
-  // });
-
   const taxTotal = "1279650.00";
-  const amountTotal = "12790.00";
+  const totalAmount = "12790.00";
 
-  const widthOfRightTotal = doc.widthOfString(`${amountTotal}`, {
+  const widthOfRightTotal = doc.widthOfString(`₹ ${totalAmount}`, {
     width: totalPriceBoxWidth - 5,
   });
 
@@ -1097,14 +1148,13 @@ const claimInvoice = (res) => {
 
   doc
     .fillColor("#333333")
-    .text(`₹${amountTotal}`, x, totalPriceBoxY + padding, {
+    .text(`₹ ${totalAmount}`, x, totalPriceBoxY + padding, {
       width: totalPriceBoxWidth - 5,
       align: "right",
     });
 
-  // GST Table
   let gstHeaderHeight = 0;
-  let gstTableY = totalPriceBoxY + 33;
+  let gstTableY = totalPriceBoxY + heightOfAmountInWords + 25;
 
   gstTableHeaders.forEach((cell, i) => {
     const h = doc.heightOfString(cell, {
@@ -1113,7 +1163,7 @@ const claimInvoice = (res) => {
     gstHeaderHeight = Math.max(gstHeaderHeight, h);
   });
 
-  gstHeaderHeight += 8; // padding
+  gstHeaderHeight += 8;
 
   let rowsHeight = 0;
 
@@ -1143,7 +1193,7 @@ const claimInvoice = (res) => {
 
   if (gstTableY + totalGstTableHeight > doc.page.height - 40) {
     doc.addPage();
-    gstTableY = headerHeight + 10;
+    gstTableY = headerHeight - 50;
   }
 
   doc
@@ -1159,9 +1209,9 @@ const claimInvoice = (res) => {
 
   gstTableHeaders.forEach((cell, i) => {
     doc
-      .font(FONT_BOLD)
+      .font(FONT_SEMIBOLD)
       .fillColor("#333333")
-      .fontSize(7)
+      .fontSize(8)
       .text(cell, tableCellX + 5, gstTableY + 4, {
         width: gstTableColumnWidths[i] - 6,
       });
@@ -1190,15 +1240,15 @@ const claimInvoice = (res) => {
       rowHeight = Math.max(rowHeight, h);
     });
 
-    rowHeight += 8;
+    rowHeight += 10;
 
     let rowX = x;
     cellValues.forEach((cell, i) => {
       doc
         .font(i === 0 ? FONT_SEMIBOLD : FONT_REGULAR)
         .fillColor("#333333")
-        .fontSize(7)
-        .text(String(cell ?? ""), rowX + 5, tableRowY + 4, {
+        .fontSize(8)
+        .text(String(cell ?? ""), rowX + 5, tableRowY + 5, {
           width: gstTableColumnWidths[i] - 6,
         });
 
@@ -1206,9 +1256,14 @@ const claimInvoice = (res) => {
     });
 
     tableRowY += rowHeight;
-  });
 
-  // All total table
+    doc
+      .moveTo(x, tableRowY)
+      .lineTo(rowX, tableRowY)
+      .strokeColor("#d5dade")
+      .lineWidth(0.2)
+      .stroke();
+  });
 
   let currentPage = 1;
 
@@ -1217,17 +1272,15 @@ const claimInvoice = (res) => {
 
   const summaryData = [
     { label: "CGST 2.5%", value: "-" },
-    { label: "SGST 2.5%", value: "377.83" },
-    { label: "IGST 5%", value: "-" },
-    { label: "CGST 9%", value: "377.83" },
-    { label: "SGST 9%", value: "377.83" },
-    { label: "IGST 9%", value: "377.83" },
+    // { label: "SGST 2.5%", value: "377.83" },
+    // { label: "IGST 5%", value: "-" },
+    // { label: "CGST 9%", value: "377.83" },
+    // { label: "SGST 9%", value: "377.83" },
+    // { label: "IGST 9%", value: "377.83" },
     { label: "Tax Total", value: "754.17" },
     { label: "Net Total", value: "4944.83" },
-    { label: "File Charge", value: "00.0" },
-    { label: "Pending Do", value: "00.0" },
-    { label: "Paid Total", value: "5000.44" },
-    { label: "Balance Total", value: "00.0" },
+    { label: "Paid Total", value: "4944.83" },
+    { label: "Balance Total", value: "4944.83" },
   ];
 
   const boxX = pageWidth - 140;
@@ -1244,17 +1297,12 @@ const claimInvoice = (res) => {
   summaryData.forEach((item, index) => {
     if (totalPriceY + rowHeight > doc.page.height - 40) {
       doc.addPage();
-      totalPriceY = headerHeight + 10;
+      totalPriceY = headerHeight - 50;
 
       summaryEndedOnNewPage = true;
       summaryEndPage = currentPage;
     }
-    if (
-      Number(item?.value) > 0 ||
-      item?.label === "Balance Total" ||
-      item?.label === "Pending Do" ||
-      item?.label === "File Charge"
-    ) {
+    if (Number(item?.value) > 0 || item?.label == "Balance Total") {
       // Label
       doc
         .font(FONT_SEMIBOLD)
@@ -1265,7 +1313,7 @@ const claimInvoice = (res) => {
       // Value (right aligned)
       doc
         .font(index === summaryData.length - 1 ? FONT_SEMIBOLD : FONT_REGULAR)
-        .text(`₹ ${item.value}`, boxX + labelWidth, totalPriceY, {
+        .text(`₹${item.value}`, boxX + labelWidth, totalPriceY, {
           width: valueWidth - 8,
           align: "right",
         });
@@ -1290,49 +1338,13 @@ const claimInvoice = (res) => {
 
   doc.fontSize(7);
 
-  let bankStartX;
-  let bankStartY;
+  let termStartY;
 
   if (summaryEndedOnNewPage) {
-    bankStartY = headerHeight + 10;
-    bankStartX = 20;
+    termStartY = headerHeight + 10;
   } else {
-    bankStartY = tableRowY + 15;
-    bankStartX = 25;
+    termStartY = tableRowY;
   }
-
-  let bankY = bankStartY;
-
-  const bankDetails = [
-    { label: "A/c Holder Name", value: "Ratnashil Online Services Pvt Ltd" },
-    { label: "A/c No.", value: "661351200021" },
-    { label: "Bank Name", value: "ICICI Bank" },
-    { label: "Branch Name", value: "-" },
-    { label: "IFSC Code", value: "ICIC0006613" },
-  ];
-
-  doc.font(FONT_BOLD).text("BANK DETAILS", bankStartX, bankY);
-
-  bankDetails.forEach((item, idx) => {
-    const text = `${item.label} ${item.value}`;
-    const labelWidth = 62;
-
-    const lineHeight = doc.heightOfString(text, {
-      width: boxWidth - 130,
-    });
-
-    doc
-      .font(FONT_SEMIBOLD)
-      .fillColor("#333333")
-      .text(item.label, bankStartX, bankY + 15);
-
-    doc
-      .font(FONT_REGULAR)
-      .fillColor("#333333")
-      .text(item.value, labelWidth + bankStartX, bankY + 15);
-
-    bankY += lineHeight + 4;
-  });
 
   const termsAndConditions = [
     "Subject to Faridabad Jurisdiction.",
@@ -1358,17 +1370,18 @@ const claimInvoice = (res) => {
 
   const totalTermsHeight = getTermsHeight();
 
-  let termsY = bankY + 50;
+  let termsY = termStartY + 40;
   let termsStartX = 20;
 
   if (termsY + totalTermsHeight > doc.page.height - 40) {
     doc.addPage();
-    termsY = headerHeight + 23;
+    termsY = headerHeight - 22;
   }
 
   doc
     .font(FONT_BOLD)
     .fillColor("#333333")
+    .fontSize(8)
     .text("TERMS & CONDITIONS", termsStartX, termsY - 15);
 
   termsAndConditions.forEach((text, index) => {
@@ -1399,7 +1412,112 @@ const claimInvoice = (res) => {
       { width: boxWidth },
     );
 
-  doc.font(FONT_BOLD).text("CUSTOMER SIGNATURE", termsStartX, termsY + 30);
+  let bankStartX = 20;
+
+  let bankY = termsY + 40;
+
+  const bankDetails = [
+    {
+      label: "Account Holder Name",
+      value: "Ratnashil Online Services Pvt Ltd",
+    },
+    { label: "Account Number", value: "661351200021" },
+    { label: "Bank Name", value: "ICICI Bank" },
+    { label: "Branch Name", value: "-" },
+    { label: "IFSC Code", value: "ICIC0006613" },
+  ];
+
+  const getBankHeight = () => {
+    let height = 0;
+
+    bankDetails.forEach((item) => {
+      const combinedText = `${item.label} ${item.value}`;
+
+      const lineHeight = doc.heightOfString(combinedText, {
+        width: boxWidth - 130,
+      });
+
+      height += lineHeight + 4;
+    });
+
+    return height;
+  };
+
+  const totalBankHeight = getBankHeight();
+
+  if (bankY + totalBankHeight > doc.page.height - 40) {
+    doc.addPage();
+    bankY = headerHeight - 50;
+  }
+
+  doc.rect(bankStartX - 4, bankY - 4, columnWidth1 + 4, 20).fill("#F6F8FC");
+
+  doc
+    .font(FONT_BOLD)
+    .fillColor("#333333")
+    .fontSize(8)
+    .text("BANK ACCOUNT DETAILS", bankStartX, bankY + 2);
+
+  bankDetails.forEach((item, idx) => {
+    const text = `${item.label} ${item.value}`;
+    const labelWidth = 140;
+
+    const lineHeight = doc.heightOfString(text, {
+      width: boxWidth - 130,
+    });
+
+    doc
+      .font(FONT_SEMIBOLD)
+      .fillColor("#333333")
+      .text(item.label, bankStartX, bankY + 24);
+
+    doc
+      .font(FONT_REGULAR)
+      .fillColor("#333333")
+      .text(item.value, labelWidth + bankStartX, bankY + 24);
+
+    bankY += lineHeight + 10;
+
+    doc
+      .moveTo(bankStartX, bankY + 20)
+      .lineTo(bankStartX + columnWidth1, bankY + 20)
+      .strokeColor("#E2E6EA")
+      .lineWidth(0.2)
+      .stroke();
+  });
+
+  // const totalWidth = columnWidth1 - 5;
+  // const gap = 4; // minimal gap
+  // const halfWidth = (totalWidth - gap) / 2;
+
+  // // Left rectangle
+  // doc
+  //   .rect(columnWidth1 + 25, termsY + 36, halfWidth, totalBankHeight + 55)
+  //   .fill("#F6F8FC");
+
+  // // Right rectangle
+  // doc
+  //   .rect(
+  //     columnWidth1 + 25 + halfWidth + gap,
+  //     termsY + 36,
+  //     halfWidth,
+  //     totalBankHeight + 55,
+  //   )
+  //   .fill("#F6F8FC");
+
+  // doc
+  //   .font(FONT_SEMIBOLD)
+  //   .fillColor("#333333")
+  //   .text("Garage Signature", columnWidth1 + 30, termsY + 41);
+
+  // doc
+  //   .font(FONT_SEMIBOLD)
+  //   .fillColor("#333333")
+  //   .text(
+  //     "Customer Signature",
+  //     columnWidth1 + 25 + halfWidth + gap + 5,
+  //     termsY + 41,
+  //   );
 
   const range = doc.bufferedPageRange();
 
@@ -1421,4 +1539,4 @@ const claimInvoice = (res) => {
   doc.end();
 };
 
-export default claimInvoice;
+export default purchaseInvoice;

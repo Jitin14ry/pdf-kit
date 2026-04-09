@@ -156,15 +156,15 @@ const servicesColumnWidths = [
 ];
 
 const servicesPartsRows = [
-  // {
-  //   sn: 1,
-  //   part: "Air Filter",
-  //   hsn: "2541206",
-  //   mrp: "5678",
-  //   disc: "0",
-  //   qty: "2",
-  //   total: "330.00",
-  // },
+  {
+    sn: 1,
+    part: "Air Filter",
+    hsn: "2541206",
+    mrp: "5678",
+    disc: "0",
+    qty: "2",
+    total: "330.00",
+  },
   // {
   //   sn: 2,
   //   part: "Front Bumper",
@@ -622,6 +622,8 @@ const generateRepairEstimationWithoutC = (res) => {
     repeatingHeader(doc);
   });
 
+  const couponAmount = 499;
+
   const infoSectionHeight = repeatingInfo(doc);
 
   const tableStartY =
@@ -692,9 +694,20 @@ const generateRepairEstimationWithoutC = (res) => {
       });
   }
 
+  if (couponAmount > 0) {
+    doc
+      .font(FONT_BOLD)
+      .fillColor("#31ac47")
+      .text(`Coupon : ₹ ${couponAmount}`, 20, servicesTableEndY + 20, {
+        width: boxWidth,
+        align: "right",
+      });
+  }
+
   const padding = 3;
   const rectHeight = 18;
-  let TotalBoxY = servicesTableEndY + 30;
+  let TotalBoxY =
+    couponAmount > 0 ? servicesTableEndY + 40 : servicesTableEndY + 30;
 
   if (TotalBoxY + rectHeight > doc.page.height - 40) {
     doc.addPage();

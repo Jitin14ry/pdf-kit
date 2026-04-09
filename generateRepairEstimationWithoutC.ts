@@ -95,7 +95,6 @@ const repeatingHeader = ({ doc, booking, serviceCenterAddress }: any) => {
   cursorY += doc.currentLineHeight() + 10;
 
   // measure text width
-  console.log({ garage_name: booking?.service_centre?.business_name });
   const textWidth = doc.widthOfString(
     booking?.service_centre?.business_name
       ? booking?.service_centre?.business_name
@@ -159,7 +158,7 @@ const repeatingHeader = ({ doc, booking, serviceCenterAddress }: any) => {
 
   /* ---------- RIGHT HEADER ---------- */
   doc.image(
-    path.join(__dirname, "../public/SGInvoiceLogo.png"),
+    path.join(__dirname, "../public/SGLogo.png"),
     boxWidth - 96,
     18,
     { width: 23 },

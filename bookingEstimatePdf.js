@@ -973,6 +973,7 @@ const bookingEstimatePdf = (res) => {
 
   const labour = 12900;
   const spare = 1290545450;
+  const couponAmount = 499;
 
   const widthOfRightTotal = doc
     .font(FONT_SEMIBOLD)
@@ -994,9 +995,19 @@ const bookingEstimatePdf = (res) => {
       align: "right",
     });
 
+  if (couponAmount > 0) {
+    doc
+      .font(FONT_BOLD)
+      .fillColor("#31ac47")
+      .text(`Coupon : ₹ ${couponAmount}`, 20, tableEndY + 25, {
+        width: boxWidth,
+        align: "right",
+      });
+  }
+
   const padding = 6;
   const rectHeight = 22;
-  let TotalBoxY = tableEndY + 30;
+  let TotalBoxY = couponAmount > 0 ? tableEndY + 40 : tableEndY + 30;
 
   if (TotalBoxY + rectHeight > doc.page.height - 40) {
     doc.addPage();
