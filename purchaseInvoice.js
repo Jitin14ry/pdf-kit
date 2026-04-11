@@ -258,7 +258,7 @@ const drawColumn = ({ doc, x, y, rows, name, labelWidth, columnWidth, bg }) => {
     }, 0);
 
     doc
-      .rect(x, y + heightOfHeader, columnWidth - 15, heightOfRows - 18)
+      .rect(x, y + heightOfHeader, columnWidth - 15, heightOfRows)
       .fill("#F6F8FC");
   }
 
@@ -379,7 +379,7 @@ const sparePartsColumnWidths = [
   45, // Net Total
 ];
 
-const sparePartsRows = [
+const sparePartsRow = [
   {
     sn: 1,
     part: "Relay Assembly_blower Motor",
@@ -552,6 +552,8 @@ const sparePartsRows = [
   })),
 ];
 
+const sparePartsRows = [];
+
 // services table data
 const servicesHeaders = [
   "SN.",
@@ -585,7 +587,7 @@ const servicesPartsRows = [
   {
     sn: 1,
     part: "Air Filter",
-    sac : "435345435",
+    sac: "435345435",
     mrp: "5678",
     gst: "18",
     before: "230.00",
@@ -598,7 +600,7 @@ const servicesPartsRows = [
   {
     sn: 2,
     part: "Front Bumper",
-    sac : "435345435",
+    sac: "435345435",
     mrp: "4823",
     gst: "18",
     before: "125.00",
@@ -646,7 +648,7 @@ const servicesPartsRows = [
     total: "1065.00",
   },
   // ---- Repeating pattern for pagination testing ----
-  ...Array.from({ length: 1 }, (_, i) => ({
+  ...Array.from({ length: 4 }, (_, i) => ({
     sn: i + 11,
     part: "General Spare Part",
     mrp: "3000",
@@ -1110,7 +1112,7 @@ const purchaseInvoice = async (res) => {
   const totalPriceBoxWidth = sparePartsColumnWidths.reduce((a, b) => a + b, 0);
 
   const heightOfAmountInWords = doc.heightOfString(totalAmountInWords, {
-    width: 300,
+    width: 350,
   });
 
   const totalBoxHeight = heightOfAmountInWords + padding * 2;
@@ -1371,11 +1373,11 @@ const purchaseInvoice = async (res) => {
   const totalTermsHeight = getTermsHeight();
 
   let termsY = termStartY + 40;
-  let termsStartX = 20;
+  let termsStartX = 25;
 
   if (termsY + totalTermsHeight > doc.page.height - 40) {
     doc.addPage();
-    termsY = headerHeight - 22;
+    termsY = headerHeight1 - 20;
   }
 
   doc
@@ -1401,6 +1403,11 @@ const purchaseInvoice = async (res) => {
 
   const widthOfDec = doc.font(FONT_SEMIBOLD).widthOfString("Declaration : ");
 
+  if (termsY + 10 + totalTermsHeight > doc.page.height - 40) {
+    doc.addPage();
+    termsY = headerHeight1 - 20;
+  }
+
   doc.font(FONT_SEMIBOLD).text("Declaration : ", termsStartX, termsY + 10);
 
   doc
@@ -1412,7 +1419,7 @@ const purchaseInvoice = async (res) => {
       { width: boxWidth },
     );
 
-  let bankStartX = 20;
+  let bankStartX = 25;
 
   let bankY = termsY + 40;
 
