@@ -1416,7 +1416,69 @@ const gstInvoice = async (res) => {
 
   const totalTermsHeight = getTermsHeight();
 
-  let termsY = bankY + 40;
+  const remarksData = [
+    "Minor scratches and dent, denting needed.",
+    "AC cooling issue",
+  ];
+
+  let headingHeight =
+    doc.heightOfString("POST INSPECTION REMARKS", {
+      width: boxWidth - 12,
+    }) + 6;
+
+  const getRemarksHeight = () => {
+    let height = 0;
+
+    remarksData.forEach((text, index) => {
+      const numberedText = `${index + 1}. ${text}`;
+
+      height +=
+        doc.heightOfString(numberedText, {
+          width: boxWidth - 12,
+        }) + 3;
+    });
+
+    return height;
+  };
+
+  const totalRemarksHeight = getRemarksHeight() + headingHeight;
+
+  let remarkX = 20;
+  let remarkY = bankY + 20;
+
+  if (remarkY + totalRemarksHeight > doc.page.height - 40) {
+    doc.addPage();
+    remarkY = headerHeight - 22;
+  }
+
+  if (remarksData?.length > 0) {
+    doc
+      .rect(remarkX - 5, remarkY, boxWidth + 5, totalRemarksHeight + 5)
+      .fill("#FFFAED");
+
+    doc
+      .font(FONT_BOLD)
+      .fillColor("#F29D00")
+      .fontSize(8)
+      .text("POST INSPECTION REMARKS", remarkX, remarkY + 5);
+  }
+
+  remarksData.forEach((text, index) => {
+    const numberedText = `${index + 1}. ${text}`;
+
+    const textHeight = doc.heightOfString(numberedText, {
+      width: boxWidth - 20,
+    });
+
+    doc
+      .font(FONT_REGULAR)
+      .fillColor("#333333")
+      .text(numberedText, remarkX, remarkY + 18, { width: boxWidth });
+
+    remarkY += textHeight + 3;
+  });
+
+  let termsY = remarksData?.length > 0 ? remarkY + 40 : remarkY + 20;
   let termsStartX = 20;
 
   if (termsY + totalTermsHeight > doc.page.height - 40) {

@@ -16,7 +16,7 @@ const PORT = 3000;
 
 // Route to generate and download PDF
 app.get("/download-pdf", (req, res) => {
-  purchaseInvoice(res);
+  gstInvoice(res);
 });
 
 app.listen(PORT, () => {
