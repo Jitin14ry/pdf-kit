@@ -663,7 +663,10 @@ const repeatingHeader = (doc) => {
     .font(FONT_BOLD)
     .fillColor("#060606")
     .fontSize(20)
-    .text("Repair Estimate", boxWidth - 120, y + 22);
+    .text("Estimate", 26, y + 22, {
+      width: boxWidth,
+      align: "right",
+    });
 
   doc
     .font(FONT_BOLD)
@@ -680,16 +683,21 @@ const repeatingHeader = (doc) => {
     { width: 10 },
   );
 
+  const addressText = "Mandsaur Chandrapura Survey No. 676 Mandsaur Madhya";
+
+  const widthOfAddress = doc
+    .font(FONT_REGULAR)
+    .fontSize(7)
+    .widthOfString(addressText);
+
   doc
     .font(FONT_REGULAR)
     .fillColor("#333333")
     .fontSize(7)
-    .text(
-      "Mandsaur Chandrapura Survey No. 676 Mandsaur Madhya Pradesh 458001",
-      boxWidth - 185,
-      y + 65,
-      { width: 200, align: "right" },
-    );
+    .text(addressText, boxWidth - 185, widthOfAddress > 190 ? y + 65 : y + 68, {
+      width: 200,
+      align: "right",
+    });
 };
 
 const repeatingInfo = (doc) => {
@@ -1087,9 +1095,11 @@ const bookingEstimatePdf = (res) => {
   doc
     .font(FONT_REGULAR)
     .text(
-      "The final amount of this estimate may vary by up to ±10% based on actual requirements and execution.",
+      "The final amount of this estimate may vary by up to ±10% based on actual requirements e may vary by up to ±10% based on actual requirements e may vary by up to ±10% based on actual requirements and execution.",
       63,
-      termsY + 10,
+      termsY + 10,{
+        width : boxWidth - 44
+      }
     );
 
   doc

@@ -112,26 +112,26 @@ const sparePartsRows = [
     qty: "2",
     total: "210.00",
   },
-  {
-    sn: 3,
-    part: "Engine Oil",
-    code: "54543543643643",
-    hsn: "3484567",
-    mrp: "3784",
-    disc: "0",
-    qty: "2",
-    total: "280.00",
-  },
-  {
-    sn: 4,
-    part: "Brake Pad",
-    code: "5656456454453",
-    hsn: "3481111",
-    mrp: "2890",
-    disc: "10",
-    qty: "1",
-    total: "340.00",
-  },
+  // {
+  //   sn: 3,
+  //   part: "Engine Oil",
+  //   code: "54543543643643",
+  //   hsn: "3484567",
+  //   mrp: "3784",
+  //   disc: "0",
+  //   qty: "2",
+  //   total: "280.00",
+  // },
+  // {
+  //   sn: 4,
+  //   part: "Brake Pad",
+  //   code: "5656456454453",
+  //   hsn: "3481111",
+  //   mrp: "2890",
+  //   disc: "10",
+  //   qty: "1",
+  //   total: "340.00",
+  // },
 ];
 
 // services table data
@@ -196,19 +196,19 @@ const servicesPartsRows = [
 ];
 
 const tableRows = [
-  { name: "Some Noise Coming In Jumping Rod Bush ", jobSheet: [] },
-  { name: "Front Bumper Damage", jobSheet: [] },
-  { name: "Some Noise Coming In Jumping Rod Bush ", jobSheet: [] },
-  { name: "Front Bumper Damage", jobSheet: [] },
-  { name: "Some Noise Coming In Jumping Rod Bush ", jobSheet: [] },
-  { name: "Front Bumper Damage", jobSheet: [] },
-  { name: "Some Noise Coming In Jumping Rod Bush ", jobSheet: [] },
-  { name: "Front Bumper Damage", jobSheet: [] },
-  { name: "Front Bumper Damage", jobSheet: [] },
-  { name: "Front Bumper Damage", jobSheet: [] },
-  { name: "Front Bumper Damage", jobSheet: [] },
-  { name: "Front Bumper Damage", jobSheet: [] },
-  { name: "Front Bumper Damage", jobSheet: [] },
+  // { name: "Some Noise Coming In Jumping Rod Bush ", jobSheet: [] },
+  // { name: "Front Bumper Damage", jobSheet: [] },
+  // { name: "Some Noise Coming In Jumping Rod Bush ", jobSheet: [] },
+  // { name: "Front Bumper Damage", jobSheet: [] },
+  // { name: "Some Noise Coming In Jumping Rod Bush ", jobSheet: [] },
+  // { name: "Front Bumper Damage", jobSheet: [] },
+  // { name: "Some Noise Coming In Jumping Rod Bush ", jobSheet: [] },
+  // { name: "Front Bumper Damage", jobSheet: [] },
+  // { name: "Front Bumper Damage", jobSheet: [] },
+  // { name: "Front Bumper Damage", jobSheet: [] },
+  // { name: "Front Bumper Damage", jobSheet: [] },
+  // { name: "Front Bumper Damage", jobSheet: [] },
+  // { name: "Front Bumper Damage", jobSheet: [] },
 ];
 
 // Draw single label-value row
@@ -704,8 +704,8 @@ const generateRepairEstimationWithoutC = (res) => {
       });
   }
 
-  const padding = 3;
-  const rectHeight = 18;
+  const padding = 6;
+  const rectHeight = 23;
   let TotalBoxY =
     couponAmount > 0 ? servicesTableEndY + 40 : servicesTableEndY + 30;
 
@@ -719,7 +719,7 @@ const generateRepairEstimationWithoutC = (res) => {
   doc.fillColor("#333333");
 
   doc
-    .font(FONT_SEMIBOLD)
+    .font(FONT_BOLD)
     .text(
       "Amount in words: ₹ One Lakh Twenty Three Thousand Eight Hundred Thirty Rupees Only",
       20,
@@ -732,7 +732,50 @@ const generateRepairEstimationWithoutC = (res) => {
     align: "right",
   });
 
-  let termsY = TotalBoxY + 50;
+  let concernY = tableRows?.length > 0 ? TotalBoxY + 50 : TotalBoxY + 25;
+
+  const getConcernsHeight = () => {
+    let height = 0;
+
+    termsAndConditions.forEach((text, index) => {
+      const numberedText = `${index + 1}. ${text}`;
+
+      height +=
+        doc.heightOfString(numberedText, {
+          width: boxWidth - 12,
+        }) + 3;
+    });
+
+    return height;
+  };
+
+  const totalConcernsHeight = getConcernsHeight();
+
+  if (concernY + totalConcernsHeight > doc.page.height - 40) {
+    doc.addPage();
+    concernY = 145;
+  }
+
+  if (tableRows?.length > 0) {
+    doc.font(FONT_BOLD).text("CONCERNS", 20, concernY - 15);
+  }
+
+  tableRows.forEach((item, index) => {
+    const numberedText = `${index + 1}. ${item?.name}`;
+
+    const textHeight = doc.heightOfString(numberedText, {
+      width: boxWidth - 12,
+    });
+
+    doc
+      .font(FONT_REGULAR)
+      .fillColor("#333333")
+      .text(numberedText, 20, concernY, { width: boxWidth - 12 });
+
+    concernY += textHeight + 5;
+  });
+
+  let termsY = concernY + 25;
 
   const getTermsHeight = () => {
     let height = 0;
@@ -753,13 +796,16 @@ const generateRepairEstimationWithoutC = (res) => {
 
   if (termsY + totalTermsHeight > doc.page.height - 40) {
     doc.addPage();
-    termsY = 145; // below repeating header
+    termsY = infoSectionHeight + 35;
   }
 
-  doc.font(FONT_BOLD).text("CONCERNS", 20, termsY - 15);
+  doc
+    .font(FONT_BOLD)
+    .fillColor("#333333")
+    .text("TERMS & CONDITIONS", 20, termsY - 15);
 
-  tableRows.forEach((item, index) => {
-    const numberedText = `${index + 1}. ${item?.name}`;
+  termsAndConditions.forEach((text, index) => {
+    const numberedText = `${index + 1}. ${text}`;
 
     const textHeight = doc.heightOfString(numberedText, {
       width: boxWidth - 12,
@@ -770,7 +816,7 @@ const generateRepairEstimationWithoutC = (res) => {
       .fillColor("#333333")
       .text(numberedText, 20, termsY, { width: boxWidth - 12 });
 
-    termsY += textHeight + 5;
+    termsY += textHeight + 3;
   });
 
   doc.font(FONT_SEMIBOLD).text("Declaration : ", 20, termsY + 10);
@@ -786,7 +832,7 @@ const generateRepairEstimationWithoutC = (res) => {
 
   doc
     .font(FONT_SEMIBOLD)
-    .text("Customer Signature".toUpperCase(), 20, termsY + 36);
+    .text("Customer Signature".toUpperCase(), 20, termsY + 40);
 
   const range = doc.bufferedPageRange();
 
