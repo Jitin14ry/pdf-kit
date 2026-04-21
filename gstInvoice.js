@@ -422,78 +422,78 @@ const sparePartsRows = [
     taxable: "360.00",
     total: "425.00",
   },
-  // {
-  //   sn: 7,
-  //   part: "Chain Sprocket",
-  //   code: "68004M69R01",
-  //   hsn: "3484444",
-  //   mrp: "7200",
-  //   gst: "18",
-  //   before: "1150.00",
-  //   disc: "5",
-  //   after: "1092.50",
-  //   qty: "1",
-  //   taxable: "1092.50",
-  //   total: "1288.00",
-  // },
-  // {
-  //   sn: 8,
-  //   part: "Side Mirror",
-  //   code: "53200M69R00",
-  //   hsn: "3485555",
-  //   mrp: "1500",
-  //   gst: "18",
-  //   before: "280.00",
-  //   disc: "0",
-  //   after: "280.00",
-  //   qty: "2",
-  //   taxable: "560.00",
-  //   total: "660.00",
-  // },
-  // {
-  //   sn: 9,
-  //   part: "Indicator Set",
-  //   code: "22400M66R00",
-  //   hsn: "3486666",
-  //   mrp: "2200",
-  //   gst: "18",
-  //   before: "350.00",
-  //   disc: "0",
-  //   after: "350.00",
-  //   qty: "1",
-  //   taxable: "350.00",
-  //   total: "413.00",
-  // },
-  // {
-  //   sn: 10,
-  //   part: "Battery",
-  //   code: "13400M68P10",
-  //   hsn: "3487777",
-  //   mrp: "9500",
-  //   gst: "18",
-  //   before: "2200.00",
-  //   disc: "5",
-  //   after: "2090.00",
-  //   qty: "1",
-  //   taxable: "2090.00",
-  //   total: "2466.00",
-  // },
-  // {
-  //   sn: 10,
-  //   part: "Battery",
-  //   code: "57711M69R00",
-  //   hsn: "3487777",
-  //   mrp: "9500",
-  //   gst: "18",
-  //   before: "2200.00",
-  //   disc: "5",
-  //   after: "2090.00",
-  //   qty: "1",
-  //   taxable: "2090.00",
-  //   total: "2466.00",
-  // },
+  {
+    sn: 7,
+    part: "Chain Sprocket",
+    code: "68004M69R01",
+    hsn: "3484444",
+    mrp: "7200",
+    gst: "18",
+    before: "1150.00",
+    disc: "5",
+    after: "1092.50",
+    qty: "1",
+    taxable: "1092.50",
+    total: "1288.00",
+  },
+  {
+    sn: 8,
+    part: "Side Mirror",
+    code: "53200M69R00",
+    hsn: "3485555",
+    mrp: "1500",
+    gst: "18",
+    before: "280.00",
+    disc: "0",
+    after: "280.00",
+    qty: "2",
+    taxable: "560.00",
+    total: "660.00",
+  },
+  {
+    sn: 9,
+    part: "Indicator Set",
+    code: "22400M66R00",
+    hsn: "3486666",
+    mrp: "2200",
+    gst: "18",
+    before: "350.00",
+    disc: "0",
+    after: "350.00",
+    qty: "1",
+    taxable: "350.00",
+    total: "413.00",
+  },
+  {
+    sn: 10,
+    part: "Battery",
+    code: "13400M68P10",
+    hsn: "3487777",
+    mrp: "9500",
+    gst: "18",
+    before: "2200.00",
+    disc: "5",
+    after: "2090.00",
+    qty: "1",
+    taxable: "2090.00",
+    total: "2466.00",
+  },
+  {
+    sn: 10,
+    part: "Battery",
+    code: "57711M69R00",
+    hsn: "3487777",
+    mrp: "9500",
+    gst: "18",
+    before: "2200.00",
+    disc: "5",
+    after: "2090.00",
+    qty: "1",
+    taxable: "2090.00",
+    total: "2466.00",
+  },
   // ---- Repeating pattern for pagination testing ----
-  ...Array.from({ length: 2 }, (_, i) => ({
+  ...Array.from({ length: 3 }, (_, i) => ({
     sn: i + 11,
     part: "General Spare Part",
     code: `34900${i + 11}`,
@@ -1050,15 +1050,22 @@ const gstInvoice = async (res) => {
       });
   }
 
+  let serviceHeadingY = tableEndY + 30;
+
   const servicesTableStartY =
     servicesPartsRows?.length > 0 ? tableEndY + 35 : tableEndY;
+
+  if (servicesTableStartY + 27 > doc.page.height - 40) {
+    doc.addPage();
+    serviceHeadingY = headerHeight - 40;
+  }
 
   if (servicesPartsRows?.length > 0) {
     doc
       .fillColor(LABEL_COLOR)
       .font(FONT_BOLD)
       .fontSize(8)
-      .text("Service & Package", x, tableEndY + 30 - doc.currentLineHeight());
+      .text("Service & Package", x, serviceHeadingY - doc.currentLineHeight());
   }
 
   const servicesTableEndY =
@@ -1066,13 +1073,13 @@ const gstInvoice = async (res) => {
       ? drawServiceTable({
           doc,
           x,
-          startY: servicesTableStartY,
+          startY: serviceHeadingY + 10,
           headers: servicesHeaders,
           rows: servicesPartsRows,
           columnWidths: servicesColumnWidths,
           headerHeight,
         })
-      : servicesTableStartY;
+      : serviceHeadingY;
 
   if (sparePartsRows?.length > 0) {
     doc
@@ -1089,8 +1096,6 @@ const gstInvoice = async (res) => {
         },
       );
   }
-
-  //   Price total box
 
   const totalAmountInWords =
     "Amount in words : Five Lakh Forty Four Thousand Four Hundred Nine Rupees And Fifty Eight Paise Only Fifty Eight Paise Only";
